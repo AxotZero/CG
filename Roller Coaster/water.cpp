@@ -8,8 +8,9 @@ water::water()
 }
 
 water::water(QVector3D LT,QVector3D RB):leftTop(LT),rightBottom(RB){
-
+	map = new QOpenGLTexture(QImage("./Textures/HeightMap.png"));
 }
+
 
 water::~water() {
 
@@ -68,7 +69,9 @@ void water::Paint(GLfloat* ProjectionMatrix, GLfloat* ModelViewMatrix,QVector3D 
 	shaderProgram->setUniformValueArray("speed", speed, 8, 1);
 	shaderProgram->setUniformValueArray("direction", direction, 8);
 	shaderProgram->setUniformValue("EyePosition", eyeLoc);
-	shaderProgram->setUniformValue("skybox", 0);	
+	shaderProgram->setUniformValue("hmap", 3);
+	shaderProgram->setUniformValue("skybox", 0);
+	
 
 
 	// Bind the buffer so that it is the current active buffer.
@@ -90,15 +93,22 @@ void water::Paint(GLfloat* ProjectionMatrix, GLfloat* ModelViewMatrix,QVector3D 
 	//unbind buffer
 	//cvbo.release();
 
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+
+	glActiveTexture(GL_TEXTURE0 + 3);
+	//glEnable(GL_TEXTURE_2D);
+	map->bind();
+	//glBindTexture(GL_TEXTURE_2D, HMtexture);
+	
+	
 	//Draw a triangle with 3 indices starting from the 0th index
 	glDrawArrays(GL_TRIANGLES, 0, vertices.size());
 	//Disable Attribute 0&1
 	shaderProgram->disableAttributeArray(0);
 	shaderProgram->disableAttributeArray(1);
 
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
-	glDrawArrays(GL_TRIANGLES, 0, 108);
 
 	//unbind vao
 	vao.release();
@@ -204,6 +214,7 @@ void water::InitShader(QString vertexShaderPath, QString fragmentShaderPath)
 }
 unsigned int water::loadcubemap(vector<std::string> faces)
 {
+	glActiveTexture(GL_TEXTURE1);
 	GLuint textureID2 = 0;
 	glGenTextures(1, &textureID2);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID2);
@@ -228,6 +239,32 @@ unsigned int water::loadcubemap(vector<std::string> faces)
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+
+	/*
+	*/
+	/*GLuint ID2 = 0;
+	glGenTextures(1, &ID2);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D,ID2);
+	unsigned char *data = stbi_load("./Textures/HeightMap.png", &width, &height, &nrComponents, 0);
+	if (data)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		stbi_image_free(data);
+
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	}
+	else
+	{
+		std::cout << "Cubemap texture failed to load at path: " << "./Textures/HeightMap.png" << std::endl;
+		stbi_image_free(data);
+	}
+	HMtexture = ID2;*/
+
 
 	return textureID2;
 }

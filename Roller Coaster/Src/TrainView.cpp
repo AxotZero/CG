@@ -21,7 +21,7 @@ void TrainView::initializeGL()
 	square->Init();
 	Plane = new plane();
 	Plane->Init();
-	Water = new water(QVector3D(-100, 2, -100), QVector3D(100,2,100));
+	Water = new water(QVector3D(-50, 2, -50), QVector3D(50,2,50));
 	Water->Init();
 	model = new Model(QString("./arrow.obj"), 30, Point3d(0, 5, 0));
 

@@ -12,6 +12,7 @@
 #include "qvector2d.h"
 #include <vector>
 #include "stb\stb_image.h"
+#include <QOpenGLTexture>
 using namespace std;
 
 
@@ -29,8 +30,9 @@ public:
 	QOpenGLBuffer skyboxVBO;
 	QVector3D leftTop;
 	QVector3D rightBottom;
+	QOpenGLTexture* map;
 	unsigned int textureID;
-	//QOpenGLTexture* heightMap;
+	unsigned int HMtexture;
 
 	float skyboxvertices[108] = {
 		// positions          
