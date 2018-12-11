@@ -10,6 +10,10 @@ water::water()
 water::water(QVector3D LT,QVector3D RB):leftTop(LT),rightBottom(RB){
 
 }
+
+water::~water() {
+
+}
 void water::DimensionTransformation(GLfloat source[], GLfloat target[][4])
 {
 	//for uniform value, transfer 1 dimension to 2 dimension
@@ -21,13 +25,13 @@ void water::DimensionTransformation(GLfloat source[], GLfloat target[][4])
 			i++;
 		}
 }
-void water::Paint(GLfloat* ProjectionMatrix, GLfloat* ModelViewMatrix)
+void water::Paint(GLfloat* ProjectionMatrix, GLfloat* ModelViewMatrix,QVector3D eyeLoc)
 {
 	static float T = 0;
 	GLfloat P[4][4];
-	GLfloat MV[4][4];
+	GLfloat M[4][4];
 	DimensionTransformation(ProjectionMatrix, P);
-	DimensionTransformation(ModelViewMatrix, MV);
+	DimensionTransformation(ModelViewMatrix, M);
 
 	//Bind the shader we want to draw with
 	shaderProgram->bind();
@@ -35,9 +39,9 @@ void water::Paint(GLfloat* ProjectionMatrix, GLfloat* ModelViewMatrix)
 	vao.bind();
 
 	T++;
-	GLfloat  amplitude[8] = { 1.0f ,1.0f ,2.0f ,0.5f ,0.7f ,1.0f,0.6f,0.3f },
+	GLfloat  amplitude[8] = { .1f ,0.01f ,0.1f ,0.1f ,0.2f ,0.0f,0.15f,0.3f },
 		wavelength[8] = { 1000.0f ,730.0f ,86.0f ,60.0f ,48.0f,90.0f,70.0f ,100.0f },
-		speed[8] = { 0.5f ,0.1f ,0.08f ,0.07f ,0.02f ,0.06f ,0.01f , 0.03f };
+		speed[8] = { 1.0f ,0.1f ,0.08f ,0.07f ,0.02f ,0.06f ,0.01f , 0.03f };
 	QVector2D direction[8] = {
 		QVector2D(1,0),
 		QVector2D(1,1),
@@ -56,13 +60,15 @@ void water::Paint(GLfloat* ProjectionMatrix, GLfloat* ModelViewMatrix)
 	shaderProgram->setUniformValue("ProjectionMatrix", P);
 	//pass modelview matrix to shader
 	shaderProgram->setUniformValue("time", T);
-	shaderProgram->setUniformValue("ModelViewMatrix", MV);
-	shaderProgram->setUniformValue("waterHeight", 5.0f);
+	shaderProgram->setUniformValue("ModelViewMatrix", M);
+	shaderProgram->setUniformValue("waterHeight", 10.0f);
 	shaderProgram->setUniformValue("numWaves", 8);
 	shaderProgram->setUniformValueArray("amplitude", amplitude, 8, 1);
 	shaderProgram->setUniformValueArray("wavelength", wavelength, 8, 1);
 	shaderProgram->setUniformValueArray("speed", speed, 8, 1);
 	shaderProgram->setUniformValueArray("direction", direction, 8);
+	shaderProgram->setUniformValue("EyePosition", eyeLoc);
+	shaderProgram->setUniformValue("skybox", 0);	
 
 
 	// Bind the buffer so that it is the current active buffer.
@@ -73,6 +79,7 @@ void water::Paint(GLfloat* ProjectionMatrix, GLfloat* ModelViewMatrix)
 	shaderProgram->setAttributeArray(0, GL_FLOAT, 0, 3, NULL);
 	//unbind buffer
 	vvbo.release();
+
 
 	// Bind the buffer so that it is the current active buffer
 	//cvbo.bind();
@@ -89,6 +96,10 @@ void water::Paint(GLfloat* ProjectionMatrix, GLfloat* ModelViewMatrix)
 	shaderProgram->disableAttributeArray(0);
 	shaderProgram->disableAttributeArray(1);
 
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+	glDrawArrays(GL_TRIANGLES, 0, 108);
+
 	//unbind vao
 	vao.release();
 	//unbind vao
@@ -96,9 +107,11 @@ void water::Paint(GLfloat* ProjectionMatrix, GLfloat* ModelViewMatrix)
 }
 void water::Init()
 {
+	initializeOpenGLFunctions();
 	InitShader("./Shader/water.vs", "./Shader/water.fs");
 	InitVAO();
 	InitVBO();
+	textureID = loadcubemap(path);
 }
 void water::InitVAO()
 {
@@ -153,6 +166,12 @@ void water::InitVBO()
 	// Allocate and initialize the information
 	//cvbo.allocate(colors.constData(), colors.size() * sizeof(QVector3D));
 
+
+	skyboxVBO.create();
+	skyboxVBO.bind();
+	skyboxVBO.setUsagePattern(QOpenGLBuffer::StaticDraw);
+	skyboxVBO.allocate(skyboxvertices, sizeof(float) * 108);
+
 }
 void water::InitShader(QString vertexShaderPath, QString fragmentShaderPath)
 {
@@ -182,4 +201,33 @@ void water::InitShader(QString vertexShaderPath, QString fragmentShaderPath)
 	else
 		qDebug() << fragmentShaderFile.filePath() << " can't be found";
 	shaderProgram->link();
+}
+unsigned int water::loadcubemap(vector<std::string> faces)
+{
+	GLuint textureID2 = 0;
+	glGenTextures(1, &textureID2);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID2);
+
+	int width, height, nrComponents;
+	for (unsigned int i = 0; i < faces.size(); i++)
+	{
+		unsigned char *data = stbi_load(faces[i].c_str(), &width, &height, &nrComponents, 0);
+		if (data)
+		{
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+			stbi_image_free(data);
+		}
+		else
+		{
+			std::cout << "Cubemap texture failed to load at path: " << faces[i] << std::endl;
+			stbi_image_free(data);
+		}
+	}
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+	return textureID2;
 }

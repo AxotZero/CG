@@ -13,7 +13,12 @@
 #include "Square.h"
 #include "plane.h"
 #include "water.h"
-
+#include "Model.h"
+#include "point3d.h"
+#include "skybox.h"
+#include <QtCore/QString>
+#include <string>
+using namespace std;
 
 class AppMain;
 class CTrack;
@@ -77,6 +82,8 @@ public:
 	Square* square;
 	plane * Plane;
 	water * Water;
+	Model * model;
+	skybox * Skybox;
 	GLfloat ProjectionMatrex[16];
 	GLfloat ModelViewMatrex[16];
 	QVector<QOpenGLTexture*> Textures;

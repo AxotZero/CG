@@ -33,7 +33,7 @@ void Triangle::Paint(GLfloat* ProjectionMatrix, GLfloat* ModelViewMatrix)
 	shaderProgram->setUniformValue("waterHeight", 0.0f);
 	static float T = 0;
 	T++;
-	std::cout << T << "\n";
+	//std::cout << T << "\n";
 	shaderProgram->setUniformValue("time", T);
 	shaderProgram->setUniformValue("numWaves", 1);
 	GLfloat a[8] = { 3.0f,0,0,0,0,0,0,0 },

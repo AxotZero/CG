@@ -23,6 +23,10 @@ void TrainView::initializeGL()
 	Plane->Init();
 	Water = new water(QVector3D(-100, 2, -100), QVector3D(100,2,100));
 	Water->Init();
+	model = new Model(QString("./arrow.obj"), 30, Point3d(0, 5, 0));
+
+	Skybox = new skybox();
+	Skybox->Init();
 	//Initialize texture 
 	initializeTexture();
 	
@@ -31,7 +35,16 @@ void TrainView::initializeTexture()
 {
 	//Load and create a texture for square;'stexture
 	QOpenGLTexture* texture = new QOpenGLTexture(QImage("./Textures/Tupi.bmp"));
+
+	/*QOpenGLTexture* world[7];
+	world[0] = new QOpenGLTexture(QImage("./Textures/right.jpg"));
+	world[1] = new QOpenGLTexture(QImage("./Textures/left.jpg"));
+	world[2] = new QOpenGLTexture(QImage("./Textures/top.jpg"));
+	world[3] = new QOpenGLTexture(QImage("./Textures/buttom.jpg"));
+	world[4] = new QOpenGLTexture(QImage("./Textures/back.jpg"));
+	world[5] = new QOpenGLTexture(QImage("./Textures/front.jpg"));*/
 	Textures.push_back(texture);
+	//for (int i = 0; i < 6; i++) World.push_back(world[i]);
 }
 void TrainView:: resetArcball()
 	//========================================================================
@@ -146,8 +159,15 @@ void TrainView::paintGL()
 	//Call triangle's render function, pass ModelViewMatrex and ProjectionMatrex
  	triangle->Paint(ProjectionMatrex,ModelViewMatrex);
 	Plane->Paint(ProjectionMatrex, ModelViewMatrex);
-    Water->Paint(ProjectionMatrex, ModelViewMatrex);
+	Quat qAll = arcball.now *arcball.start;
+	qAll = qAll.conjugate();
+    Water->Paint(ProjectionMatrex, ModelViewMatrex, QVector3D(arcball.eyeX+qAll.x, arcball.eyeY + qAll.y, arcball.eyeZ + qAll.z));
+	//model->Paint(ProjectionMatrex, ModelViewMatrex);
+	
 	//we manage textures by Trainview class, so we modify square's render function
+
+	Skybox->Paint(ProjectionMatrex, ModelViewMatrex);
+
 	square->Begin();
 		//Active Texture
 		glActiveTexture(GL_TEXTURE0);
@@ -178,7 +198,8 @@ setProjection()
 		arcball.setProjection(false);
 		update();
 	// Or we use the top cam
-	}else if (this->camera == 1) {
+	}
+	else if (this->camera == 1) {
 		float wi, he;
 		if (aspect >= 1) {
 			wi = 110;

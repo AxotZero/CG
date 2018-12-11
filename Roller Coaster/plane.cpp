@@ -80,10 +80,10 @@ void plane::InitVAO()
 void plane::InitVBO()
 {
 	//Set each vertex's position
-	vertices << QVector3D(50.0f, -10.0f, 10.0f)
-		<< QVector3D(50.0f, -10.0f, 30.0f)
-		<< QVector3D(70.0f, -10.0f, 30.0f)
-		<< QVector3D(70.0f, -10.0f, 10.0f);
+	vertices << QVector3D(50.0f, 5.0f, 10.0f)
+		<< QVector3D(50.0f, 5.0f, 30.0f)
+		<< QVector3D(70.0f, 5.0f, 30.0f)
+		<< QVector3D(70.0f, 5.0f, 10.0f);
 	// Create Buffer for position
 	vvbo.create();
 	// Bind the buffer so that it is the current active buffer.
