@@ -19,6 +19,8 @@
 #include <QtCore/QString>
 #include <string>
 using namespace std;
+class ScenePostEffect;
+
 
 class AppMain;
 class CTrack;
@@ -47,6 +49,7 @@ public:
 	// overrides of important window things
 	//virtual int handle(int);
 	virtual void paintGL();
+	void paintBeforeEffect();
 
 	// all of the actual drawing happens in this routine
 	// it has to be encapsulated, since we draw differently if
@@ -86,7 +89,11 @@ public:
 	skybox * Skybox;
 	GLfloat ProjectionMatrex[16];
 	GLfloat ModelViewMatrex[16];
+	ScenePostEffect * SPE;
 	QVector<QOpenGLTexture*> Textures;
+
+
+
 
 };  
 #endif // TRAINVIEW_H  

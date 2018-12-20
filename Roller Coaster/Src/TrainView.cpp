@@ -1,5 +1,5 @@
 #include "TrainView.h"  
-
+#include "ScenePostEffect.h"
 TrainView::TrainView(QWidget *parent) :  
 QGLWidget(parent)  
 {  
@@ -28,6 +28,8 @@ void TrainView::initializeGL()
 	Skybox = new skybox();
 	Skybox->Init();
 	//Initialize texture 
+	SPE = new ScenePostEffect(this);
+	SPE->Init();
 	initializeTexture();
 	
 }
@@ -46,6 +48,7 @@ void TrainView::initializeTexture()
 	Textures.push_back(texture);
 	//for (int i = 0; i < 6; i++) World.push_back(world[i]);
 }
+
 void TrainView:: resetArcball()
 	//========================================================================
 {
@@ -57,37 +60,41 @@ void TrainView:: resetArcball()
 
 void TrainView::paintGL()
 {
-
+	
+	SPE->Paint();
+	//this->paintBeforeEffect();
+}
+void TrainView::paintBeforeEffect() {
 	//*********************************************************************
 	//
 	// * Set up basic opengl informaiton
 	//
 	//**********************************************************************
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	// Set up the view port
-	glViewport(0,0,width(),height());
+	glViewport(0, 0, width(), height());
 	// clear the window, be sure to clear the Z-Buffer too
-	glClearColor(0,0,0.3f,0);
-	
+	glClearColor(0, 0, 0.3f, 0);
+
 	// we need to clear out the stencil buffer since we'll use
 	// it for shadows
 	glClearStencil(0);
 	glEnable(GL_DEPTH);
 
 	// Blayne prefers GL_DIFFUSE
-    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 
 	// prepare for projection
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	setProjection();		// put the code to set up matrices here
 
-	//######################################################################
-	// TODO: 
-	// you might want to set the lighting up differently. if you do, 
-	// we need to set up the lights AFTER setting up the projection
-	//######################################################################
-	// enable the lighting
+							//######################################################################
+							// TODO: 
+							// you might want to set the lighting up differently. if you do, 
+							// we need to set up the lights AFTER setting up the projection
+							//######################################################################
+							// enable the lighting
 	glEnable(GL_COLOR_MATERIAL);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LIGHTING);
@@ -97,7 +104,8 @@ void TrainView::paintGL()
 	if (this->camera == 1) {
 		glDisable(GL_LIGHT1);
 		glDisable(GL_LIGHT2);
-	} else {
+	}
+	else {
 		glEnable(GL_LIGHT1);
 		glEnable(GL_LIGHT2);
 	}
@@ -107,13 +115,13 @@ void TrainView::paintGL()
 	// * set the light parameters
 	//
 	//**********************************************************************
-	GLfloat lightPosition1[]	= {0,1,1,0}; // {50, 200.0, 50, 1.0};
-	GLfloat lightPosition2[]	= {1, 0, 0, 0};
-	GLfloat lightPosition3[]	= {0, -1, 0, 0};
-	GLfloat yellowLight[]		= {0.5f, 0.5f, .1f, 1.0};
-	GLfloat whiteLight[]		= {1.0f, 1.0f, 1.0f, 1.0};
-	GLfloat blueLight[]			= {.1f,.1f,.3f,1.0};
-	GLfloat grayLight[]			= {.3f, .3f, .3f, 1.0};
+	GLfloat lightPosition1[] = { 0,1,1,0 }; // {50, 200.0, 50, 1.0};
+	GLfloat lightPosition2[] = { 1, 0, 0, 0 };
+	GLfloat lightPosition3[] = { 0, -1, 0, 0 };
+	GLfloat yellowLight[] = { 0.5f, 0.5f, .1f, 1.0 };
+	GLfloat whiteLight[] = { 1.0f, 1.0f, 1.0f, 1.0 };
+	GLfloat blueLight[] = { .1f,.1f,.3f,1.0 };
+	GLfloat grayLight[] = { .3f, .3f, .3f, 1.0 };
 
 	glLightfv(GL_LIGHT0, GL_POSITION, lightPosition1);
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, whiteLight);
@@ -132,8 +140,6 @@ void TrainView::paintGL()
 	//*********************************************************************
 	setupFloor();
 	glDisable(GL_LIGHTING);
-	drawFloor(200,10);
-
 
 	//*********************************************************************
 	// now draw the object and we need to do it twice
@@ -141,45 +147,40 @@ void TrainView::paintGL()
 	//*********************************************************************
 	glEnable(GL_LIGHTING);
 	setupObjects();
-
-	drawStuff();
-
 	// this time drawing is for shadows (except for top view)
 	if (this->camera != 1) {
 		setupShadows();
 		drawStuff(true);
 		unsetupShadows();
 	}
-
 	//Get modelview matrix
- 	glGetFloatv(GL_MODELVIEW_MATRIX,ModelViewMatrex);
+	glGetFloatv(GL_MODELVIEW_MATRIX, ModelViewMatrex);
 	//Get projection matrix
- 	glGetFloatv(GL_PROJECTION_MATRIX,ProjectionMatrex);
-
+	glGetFloatv(GL_PROJECTION_MATRIX, ProjectionMatrex);
 	//Call triangle's render function, pass ModelViewMatrex and ProjectionMatrex
- 	triangle->Paint(ProjectionMatrex,ModelViewMatrex);
+	triangle->Paint(ProjectionMatrex, ModelViewMatrex);
 	Plane->Paint(ProjectionMatrex, ModelViewMatrex);
 	Quat qAll = arcball.now *arcball.start;
 	qAll = qAll.conjugate();
-    Water->Paint(ProjectionMatrex, ModelViewMatrex, QVector3D(arcball.eyeX+qAll.x, arcball.eyeY + qAll.y, arcball.eyeZ + qAll.z));
+	//Water->Paint(ProjectionMatrex, ModelViewMatrex, QVector3D(arcball.eyeX+qAll.x, arcball.eyeY + qAll.y, arcball.eyeZ + qAll.z));
 	//model->Paint(ProjectionMatrex, ModelViewMatrex);
-	
 	//we manage textures by Trainview class, so we modify square's render function
-
 	Skybox->Paint(ProjectionMatrex, ModelViewMatrex);
 
 	square->Begin();
-		//Active Texture
-		glActiveTexture(GL_TEXTURE0);
-		//Bind square's texture
-		Textures[0]->bind();
-		//pass texture to shader
-		square->shaderProgram->setUniformValue("Texture",0);
-		//Call square's render function, pass ModelViewMatrex and ProjectionMatrex
-		square->Paint(ProjectionMatrex,ModelViewMatrex);
+	//Active Texture
+	glActiveTexture(GL_TEXTURE0);
+	//Bind square's texture
+	Textures[0]->bind();
+	//pass texture to shader
+	square->shaderProgram->setUniformValue("Texture", 0);
+	//Call square's render function, pass ModelViewMatrex and ProjectionMatrex
+	square->Paint(ProjectionMatrex, ModelViewMatrex);
 	square->End();
-}
 
+	drawFloor(200, 10);
+	drawStuff();
+}
 //************************************************************************
 //
 // * This sets up both the Projection and the ModelView matrices

@@ -182,6 +182,7 @@
     </ClCompile>
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="plane.cpp" />
+    <ClCompile Include="ScenePostEffect.cpp" />
     <ClCompile Include="skybox.cpp" />
     <ClCompile Include="Src\AppMain.cpp" />
     <ClCompile Include="Src\ControlPoint.cpp" />
@@ -225,6 +226,7 @@
     <ClInclude Include="Model.h" />
     <ClInclude Include="plane.h" />
     <ClInclude Include="point3d.h" />
+    <ClInclude Include="ScenePostEffect.h" />
     <ClInclude Include="skybox.h" />
     <ClInclude Include="water.h" />
     <CustomBuild Include="Include\TrainView.h">

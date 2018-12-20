@@ -28,7 +28,7 @@
 
 using namespace std;
 
-class skybox : protected QOpenGLFunctions
+class skybox : protected QOpenGLFunctions_4_3_Core
 {
 public:
 	QOpenGLShaderProgram * shaderProgram;
