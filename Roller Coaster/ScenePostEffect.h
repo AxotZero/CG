@@ -8,7 +8,8 @@
 #include <QFileInfo>
 #include <QDebug>
 #include <QString>
-
+#include <string>
+using namespace std;
 class TrainView;
 
 
@@ -25,9 +26,12 @@ public:
 	QOpenGLBuffer cvbo;
 	GLuint FramBufferName = 0;
 	GLuint renderedTexture = 0;
+	int preShader = 0;
 	QVector<GLenum> DrawBuffers;
 	TrainView * Tp = nullptr;
-
+	string vs_fs[3][2] = { 	{"./Shader/post_gaus.vs", "./Shader/post_gaus.fs"} ,	
+										{"./Shader/pix.vs", "./Shader/pix.fs" },
+										{  "./Shader/frost.vs", "./Shader/frost.fs" }};
 public:
 	ScenePostEffect(TrainView * Tp);
 	void Draw();

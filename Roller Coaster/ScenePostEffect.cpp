@@ -20,11 +20,18 @@ void ScenePostEffect::DimensionTransformation(GLfloat source[], GLfloat target[]
 
 void ScenePostEffect::Paint()
 {
+	if (preShader != Tp->posteffect) {
+		preShader = Tp->posteffect;
+		InitShader(vs_fs[preShader][0].c_str() , vs_fs[preShader][1].c_str());
+	}
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	
 	glBindFramebuffer(GL_FRAMEBUFFER, FramBufferName);
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 	Tp->paintBeforeEffect();
+
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
 	// Set up the view port
 	glViewport(0, 0,Tp->width(), Tp->height());
@@ -34,25 +41,16 @@ void ScenePostEffect::Paint()
 	// we need to clear out the stencil buffer since we'll use
 	// it for shadows
 	glClearStencil(0);
-	glEnable(GL_DEPTH);
 
 	// Blayne prefers GL_DIFFUSE
 	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 
 	glEnable(GL_DEPTH);
-
-	// Blayne prefers GL_DIFFUSE
-	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 
 	// prepare for projection
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	Tp->setProjection();		// put the code to set up matrices here
-
-	glEnable(GL_COLOR_MATERIAL);
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
 
 	//Bind the shader we want to draw with
 	shaderProgram->bind();
@@ -101,7 +99,8 @@ void ScenePostEffect::Paint()
 void ScenePostEffect::Init()
 {
 	initializeOpenGLFunctions();
-	InitShader("./Shader/post_gaus.vs", "./Shader/post_gaus.fs");
+	preShader = Tp->posteffect;
+	InitShader(vs_fs[preShader][0].c_str(), vs_fs[preShader][1].c_str());
 	//InitShader("./Shader/pix.vs", "./Shader/frost.fs");
 	
 	InitVAO();
@@ -193,5 +192,12 @@ void ScenePostEffect::InitFramBuffer() {
 	// Set the list of draw buffers. 
 	DrawBuffers << GL_COLOR_ATTACHMENT0;
 	glDrawBuffers(1, &DrawBuffers[0]); // "1" is the size of DrawBuffers
+	
 
+	GLuint depthrenderbuffer;
+	glGenRenderbuffers(1, &depthrenderbuffer);
+	glBindRenderbuffer(GL_RENDERBUFFER, depthrenderbuffer);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, Tp->width(), Tp->height());
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthrenderbuffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }

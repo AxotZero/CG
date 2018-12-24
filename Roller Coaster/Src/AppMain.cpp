@@ -55,6 +55,8 @@ AppMain::AppMain(QWidget *parent)
 	connect( ui.rcpxsub		,SIGNAL(clicked()),this,SLOT(RotateControlPointSubX())				);
 	connect( ui.rcpzadd		,SIGNAL(clicked()),this,SLOT(RotateControlPointAddZ())					);
 	connect( ui.rcpzsub		,SIGNAL(clicked()),this,SLOT(RotateControlPointSubZ())				);
+
+	connect(ui.postShader, SIGNAL(currentIndexChanged(QString)), this, SLOT(ChangePostEffect(QString)));
 	QMediaPlayer* player;
 
 	//player = new QMediaPlayer;
@@ -250,6 +252,28 @@ void AppMain::ChangeCameraType( QString type )
 	else if( type == "Train" )
 	{
 		this->trainview->camera = 2;
+		update();
+	}
+}
+
+void AppMain::ChangePostEffect(QString type) {
+	if (type[0] == "1")
+	{
+		this->trainview->posteffect = 0;
+		update();
+	}
+	else if (type[0] == "2")
+	{
+		this->trainview->posteffect = 1;
+		update();
+	}
+	else if (type[0] == "3")
+	{
+		this->trainview->posteffect = 2;
+		update();
+	}
+	else {
+		this->trainview->posteffect = 3;
 		update();
 	}
 }

@@ -60,9 +60,10 @@ void TrainView:: resetArcball()
 
 void TrainView::paintGL()
 {
-	
-	SPE->Paint();
-	//this->paintBeforeEffect();
+	if (posteffect == 3) {
+		this->paintBeforeEffect();
+	}
+	else SPE->Paint();
 }
 void TrainView::paintBeforeEffect() {
 	//*********************************************************************
@@ -70,7 +71,7 @@ void TrainView::paintBeforeEffect() {
 	// * Set up basic opengl informaiton
 	//
 	//**********************************************************************
-	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	// Set up the view port
 	glViewport(0, 0, width(), height());
 	// clear the window, be sure to clear the Z-Buffer too
@@ -140,6 +141,7 @@ void TrainView::paintBeforeEffect() {
 	//*********************************************************************
 	setupFloor();
 	glDisable(GL_LIGHTING);
+	drawFloor(200, 10);
 
 	//*********************************************************************
 	// now draw the object and we need to do it twice
@@ -148,6 +150,7 @@ void TrainView::paintBeforeEffect() {
 	glEnable(GL_LIGHTING);
 	setupObjects();
 	// this time drawing is for shadows (except for top view)
+	drawStuff();
 	if (this->camera != 1) {
 		setupShadows();
 		drawStuff(true);
@@ -177,9 +180,7 @@ void TrainView::paintBeforeEffect() {
 	//Call square's render function, pass ModelViewMatrex and ProjectionMatrex
 	square->Paint(ProjectionMatrex, ModelViewMatrex);
 	square->End();
-
-	drawFloor(200, 10);
-	drawStuff();
+	
 }
 //************************************************************************
 //

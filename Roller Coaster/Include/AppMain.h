@@ -66,6 +66,8 @@ private:
 		void ChangeCamToTop();
 		void ChangeCamToTrain();
 
+		void ChangePostEffect(QString type);
+
 		void ChangeCurveType( QString type );
 		void ChangeCurveToLinear();
 		void ChangeCurveToCardinal();

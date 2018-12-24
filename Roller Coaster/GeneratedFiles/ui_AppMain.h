@@ -66,7 +66,8 @@ public:
     QGroupBox *groupBox_2;
     QPushButton *rcpzadd;
     QPushButton *rcpzsub;
-    QSpacerItem *horizontalSpacer_2;
+    QGroupBox *groupPostEffect;
+    QComboBox *postShader;
     QHBoxLayout *horizontalLayout_2;
     QSpacerItem *horizontalSpacer_4;
     QSlider *sSpeed;
@@ -84,7 +85,7 @@ public:
     {
         if (AppMainClass->objectName().isEmpty())
             AppMainClass->setObjectName(QStringLiteral("AppMainClass"));
-        AppMainClass->resize(1028, 769);
+        AppMainClass->resize(1032, 769);
         QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
         sizePolicy.setHorizontalStretch(0);
         sizePolicy.setVerticalStretch(0);
@@ -512,9 +513,52 @@ public:
 
         horizontalLayout->addWidget(groupBox_2);
 
-        horizontalSpacer_2 = new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum);
+        groupPostEffect = new QGroupBox(centralWidget);
+        groupPostEffect->setObjectName(QStringLiteral("groupPostEffect"));
+        sizePolicy2.setHeightForWidth(groupPostEffect->sizePolicy().hasHeightForWidth());
+        groupPostEffect->setSizePolicy(sizePolicy2);
+        groupPostEffect->setMinimumSize(QSize(120, 150));
+        groupPostEffect->setMaximumSize(QSize(200, 150));
+        groupPostEffect->setFont(font1);
+        groupPostEffect->setAutoFillBackground(false);
+        groupPostEffect->setStyleSheet(QLatin1String("background-color: rgb(249, 249, 249);\n"
+"border-radius: 5px;"));
+        groupPostEffect->setAlignment(Qt::AlignCenter);
+        postShader = new QComboBox(groupPostEffect);
+        postShader->addItem(QString());
+        postShader->addItem(QString());
+        postShader->addItem(QString());
+        postShader->addItem(QString());
+        postShader->setObjectName(QStringLiteral("postShader"));
+        postShader->setGeometry(QRect(10, 40, 96, 96));
+        sizePolicy3.setHeightForWidth(postShader->sizePolicy().hasHeightForWidth());
+        postShader->setSizePolicy(sizePolicy3);
+        postShader->setFont(font2);
+        postShader->setStyleSheet(QLatin1String(" QComboBox {\n"
+"	background-color: rgb(80, 80, 80);\n"
+"	color: rgb(240, 240, 240);\n"
+"    border-radius: 10px;\n"
+"}\n"
+"\n"
+"QComboBox:on {\n"
+"	background-color: qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.5, fx:0.499001, fy:0.000500999, stop:0 rgba(152, 152, 152, 217), stop:1 rgba(0, 0, 0, 232));\n"
+"     padding-top: 3px;\n"
+"     padding-left: 4px;\n"
+"}\n"
+"\n"
+"QComboBox::down-arrow {\n"
+"	image: url(:/AppMain/down_arrow.ico);\n"
+"}\n"
+"\n"
+"QComboBox::drop-down {\n"
+"     border-left-color: rgb(240, 240, 240);\n"
+"}\n"
+"\n"
+"QComboBox QAbstractItemView {\n"
+"     selection-background-color: rgb(80, 80, 80);\n"
+"}"));
 
-        horizontalLayout->addItem(horizontalSpacer_2);
+        horizontalLayout->addWidget(groupPostEffect);
 
 
         verticalLayout->addLayout(horizontalLayout);
@@ -555,7 +599,7 @@ public:
         AppMainClass->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(AppMainClass);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 1028, 21));
+        menuBar->setGeometry(QRect(0, 0, 1032, 25));
         menuFile = new QMenu(menuBar);
         menuFile->setObjectName(QStringLiteral("menuFile"));
         menuCamera = new QMenu(menuBar);
@@ -641,6 +685,12 @@ public:
         groupBox_2->setTitle(QApplication::translate("AppMainClass", "Rotate CP Z", nullptr));
         rcpzadd->setText(QString());
         rcpzsub->setText(QString());
+        groupPostEffect->setTitle(QApplication::translate("AppMainClass", "PostEffect", nullptr));
+        postShader->setItemText(0, QApplication::translate("AppMainClass", "111111", nullptr));
+        postShader->setItemText(1, QApplication::translate("AppMainClass", "222222", nullptr));
+        postShader->setItemText(2, QApplication::translate("AppMainClass", "333333", nullptr));
+        postShader->setItemText(3, QApplication::translate("AppMainClass", "444444", nullptr));
+
         menuFile->setTitle(QApplication::translate("AppMainClass", "File", nullptr));
         menuCamera->setTitle(QApplication::translate("AppMainClass", "Camera", nullptr));
         menuCurve->setTitle(QApplication::translate("AppMainClass", "Curve", nullptr));

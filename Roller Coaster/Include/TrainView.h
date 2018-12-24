@@ -77,6 +77,7 @@ public:
 	CTrack*			m_pTrack;		// The track of the entire scene
 	unsigned int DIVIDE_LINE = 100;
 	int camera;
+	int posteffect=0;
 	int curve;
 	int track;
 	bool isrun;

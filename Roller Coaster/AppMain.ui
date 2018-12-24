@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1028</width>
+    <width>1032</width>
     <height>769</height>
    </rect>
   </property>
@@ -957,26 +957,116 @@ QPushButton:pressed {
        </widget>
       </item>
       <item>
-       <spacer name="horizontalSpacer_2">
+       <widget class="QGroupBox" name="groupPostEffect">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="minimumSize">
          <size>
           <width>120</width>
-          <height>120</height>
+          <height>150</height>
          </size>
         </property>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeType">
-         <enum>QSizePolicy::Expanding</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
+        <property name="maximumSize">
          <size>
-          <width>0</width>
-          <height>0</height>
+          <width>200</width>
+          <height>150</height>
          </size>
         </property>
-       </spacer>
+        <property name="font">
+         <font>
+          <family>Comic Sans MS</family>
+          <pointsize>10</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="autoFillBackground">
+         <bool>false</bool>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(249, 249, 249);
+border-radius: 5px;</string>
+        </property>
+        <property name="title">
+         <string>PostEffect</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+        <widget class="QComboBox" name="postShader">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>40</y>
+           <width>96</width>
+           <height>96</height>
+          </rect>
+         </property>
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <family>Comic Sans MS</family>
+           <pointsize>9</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true"> QComboBox {
+	background-color: rgb(80, 80, 80);
+	color: rgb(240, 240, 240);
+    border-radius: 10px;
+}
+
+QComboBox:on {
+	background-color: qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.5, fx:0.499001, fy:0.000500999, stop:0 rgba(152, 152, 152, 217), stop:1 rgba(0, 0, 0, 232));
+     padding-top: 3px;
+     padding-left: 4px;
+}
+
+QComboBox::down-arrow {
+	image: url(:/AppMain/down_arrow.ico);
+}
+
+QComboBox::drop-down {
+     border-left-color: rgb(240, 240, 240);
+}
+
+QComboBox QAbstractItemView {
+     selection-background-color: rgb(80, 80, 80);
+}</string>
+         </property>
+         <item>
+          <property name="text">
+           <string>111111</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>222222</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>333333</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>444444</string>
+          </property>
+         </item>
+        </widget>
+       </widget>
       </item>
      </layout>
     </item>
@@ -1048,8 +1138,8 @@ QPushButton:pressed {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1028</width>
-     <height>21</height>
+     <width>1032</width>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
