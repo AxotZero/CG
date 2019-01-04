@@ -1,5 +1,7 @@
 #include "TrainView.h"  
 #include "ScenePostEffect.h"
+
+#include <GLM/glm/glm.hpp>
 TrainView::TrainView(QWidget *parent) :  
 QGLWidget(parent)  
 {  
@@ -23,8 +25,13 @@ void TrainView::initializeGL()
 	Plane->Init();
 	Water = new water(QVector3D(-50, 2, -50), QVector3D(50,2,50));
 	Water->Init();
-	model = new Model(QString("./arrow.obj"), 30, Point3d(0, 5, 0));
 
+	model = new Model(QString("./Model/arrow.obj"), 30, Point3d(5, 5, 0));
+	tower.Init("./Model/wooden watch tower2.obj", "./Model/Wood_Tower_Col.jpg", "./Model/Wood_Tower_Nor.jpg", glm::vec3(0, 0, 0), 3);
+	house.Init("./Model/Medieval_House.obj", "./Model/Medieval_House_Diff.png", "./Model/Medieval_House_Nor.png", glm::vec3(50, 0, 0), 0.1);
+	
+	//statue = new C3DSLoader(QString("./statue.3ds"));
+	//statue.Init("./Hogwarts.3DS");
 	Skybox = new skybox();
 	Skybox->Init();
 	//Initialize texture 
@@ -48,7 +55,6 @@ void TrainView::initializeTexture()
 	Textures.push_back(texture);
 	//for (int i = 0; i < 6; i++) World.push_back(world[i]);
 }
-
 void TrainView:: resetArcball()
 	//========================================================================
 {
@@ -57,10 +63,9 @@ void TrainView:: resetArcball()
 	// a little trial and error goes a long way
 	arcball.setup(this, 40, 250, .2f, .4f, 0);
 }
-
 void TrainView::paintGL()
 {
-	if (posteffect == 3) {
+	if (posteffect == 0) {
 		this->paintBeforeEffect();
 	}
 	else SPE->Paint();
@@ -150,7 +155,7 @@ void TrainView::paintBeforeEffect() {
 	glEnable(GL_LIGHTING);
 	setupObjects();
 	// this time drawing is for shadows (except for top view)
-	drawStuff();
+	
 	if (this->camera != 1) {
 		setupShadows();
 		drawStuff(true);
@@ -165,8 +170,9 @@ void TrainView::paintBeforeEffect() {
 	Plane->Paint(ProjectionMatrex, ModelViewMatrex);
 	Quat qAll = arcball.now *arcball.start;
 	qAll = qAll.conjugate();
+
 	//Water->Paint(ProjectionMatrex, ModelViewMatrex, QVector3D(arcball.eyeX+qAll.x, arcball.eyeY + qAll.y, arcball.eyeZ + qAll.z));
-	//model->Paint(ProjectionMatrex, ModelViewMatrex);
+	
 	//we manage textures by Trainview class, so we modify square's render function
 	Skybox->Paint(ProjectionMatrex, ModelViewMatrex);
 
@@ -180,7 +186,12 @@ void TrainView::paintBeforeEffect() {
 	//Call square's render function, pass ModelViewMatrex and ProjectionMatrex
 	square->Paint(ProjectionMatrex, ModelViewMatrex);
 	square->End();
-	
+
+	model->Paint(ProjectionMatrex, ModelViewMatrex);
+	tower.Paint(ProjectionMatrex, ModelViewMatrex);
+	house.Paint(ProjectionMatrex, ModelViewMatrex);
+	//statue.Draw();
+	drawStuff();
 }
 //************************************************************************
 //
@@ -525,7 +536,7 @@ drawTrain(bool doingShadow) {
 	if (!doingShadow) { glColor3ub(255, 255, 255); }	
 	float Length = sqrt(pow(qt.x - qt0.x, 2) + pow(qt.y - qt0.y, 2) + pow(qt.z - qt0.z, 2));
 	if (this->isrun) {
-		this->t_time += (1.0 / m_pTrack->points.size() / (this->DIVIDE_LINE / (0.04 / Length * 0.7)));
+		this->t_time += ((float)DIVIDE_LINE * sqrt((float)DIVIDE_LINE / 100.0) / 100.0 / m_pTrack->points.size() / (DIVIDE_LINE / (0.04 / Length * 0.7)));
 		if (this->t_time > 1.0f)
 			this->t_time -= 1.0f;
 	}

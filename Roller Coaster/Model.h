@@ -12,9 +12,7 @@
 #include <QString>
 #include <QtCore/QString>
 #include <QtCore/QVector>
-
 #include <math.h>
-
 #include "point3d.h"
 
 class Model

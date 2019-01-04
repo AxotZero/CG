@@ -14,10 +14,12 @@
 #include "plane.h"
 #include "water.h"
 #include "Model.h"
+#include "Model2.h"
 #include "point3d.h"
 #include "skybox.h"
 #include <QtCore/QString>
 #include <string>
+#include "3DSLoader.h"
 using namespace std;
 class ScenePostEffect;
 
@@ -75,7 +77,7 @@ public:
 	int				selectedCube;  // simple - just remember which cube is selected
 
 	CTrack*			m_pTrack;		// The track of the entire scene
-	unsigned int DIVIDE_LINE = 100;
+	unsigned int DIVIDE_LINE = 1000;
 	int camera;
 	int posteffect=0;
 	int curve;
@@ -86,15 +88,15 @@ public:
 	Square* square;
 	plane * Plane;
 	water * Water;
-	Model * model;
+	
 	skybox * Skybox;
 	GLfloat ProjectionMatrex[16];
 	GLfloat ModelViewMatrex[16];
 	ScenePostEffect * SPE;
 	QVector<QOpenGLTexture*> Textures;
-
-
-
-
+	Model * model;
+	Model2 tower;
+	Model2 house;
+	C3DSLoader statue;
 };  
-#endif // TRAINVIEW_H  
+#endif // TRAINVIEW_H 

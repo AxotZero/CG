@@ -75,9 +75,9 @@
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IncludePath)</IncludePath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\freeglut\include;$(IncludePath)</IncludePath>
     <ReferencePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ReferencePath)</ReferencePath>
-    <ReferencePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\freeglut\lib\x64;$(ReferencePath)</ReferencePath>
+    <ReferencePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\freeglut\lib\x64;.\Roller Coaster\Lib;$(ReferencePath)</ReferencePath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">D:\a\QT\5.2.0\msvc2010_opengl\lib;./;$(LibraryPath)</LibraryPath>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\freeglut\lib\x64;./;$(LibraryPath)</LibraryPath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\Roller Coaster\Lib;..\freeglut\lib\x64;./;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -114,9 +114,9 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
-      <AdditionalLibraryDirectories>$(QTDIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(QTDIR)\lib;D:\1_Course\Graphic\CG\RollerCoaster\Roller Coaster\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>freeglut.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5OpenGLd.lib;opengl32.lib;glu32.lib;Qt5Widgetsd.lib;Qt5Multimediad.lib;Qt5OpenGLExtensionsd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>freeglut.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5OpenGLd.lib;opengl32.lib;glu32.lib;Qt5Widgetsd.lib;Qt5Multimediad.lib;Qt5OpenGLExtensionsd.lib;assimp-vc140-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -154,6 +154,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="3DSLoader.cpp" />
+    <ClCompile Include="CBMPLoader.cpp" />
     <ClCompile Include="GeneratedFiles\Debug\moc_AppMain.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -181,6 +183,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Model.cpp" />
+    <ClCompile Include="Model2.cpp" />
     <ClCompile Include="plane.cpp" />
     <ClCompile Include="ScenePostEffect.cpp" />
     <ClCompile Include="skybox.cpp" />
@@ -194,6 +197,8 @@
     <ClCompile Include="Src\Utilities\3DUtils.cpp" />
     <ClCompile Include="Src\Utilities\ArcBallCam.cpp" />
     <ClCompile Include="Src\Utilities\Pnt3f.cpp" />
+    <ClCompile Include="vec.cpp" />
+    <ClCompile Include="vector.cpp" />
     <ClCompile Include="water.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -219,15 +224,21 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="3DSLoader.h" />
+    <ClInclude Include="CbmpLoader.h" />
     <ClInclude Include="GeneratedFiles\ui_AppMain.h" />
     <ClInclude Include="Include\ControlPoint.H" />
     <ClInclude Include="Include\Square.h" />
     <ClInclude Include="Include\Track.H" />
+    <ClInclude Include="mesh.h" />
     <ClInclude Include="Model.h" />
+    <ClInclude Include="Model2.h" />
     <ClInclude Include="plane.h" />
     <ClInclude Include="point3d.h" />
     <ClInclude Include="ScenePostEffect.h" />
     <ClInclude Include="skybox.h" />
+    <ClInclude Include="vec.h" />
+    <ClInclude Include="vector.h" />
     <ClInclude Include="water.h" />
     <CustomBuild Include="Include\TrainView.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>

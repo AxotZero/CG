@@ -22,7 +22,7 @@ void ScenePostEffect::Paint()
 {
 	if (preShader != Tp->posteffect) {
 		preShader = Tp->posteffect;
-		InitShader(vs_fs[preShader][0].c_str() , vs_fs[preShader][1].c_str());
+		InitShader(vs_fs[preShader - 1][0].c_str() , vs_fs[preShader - 1][1].c_str());
 	}
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	
@@ -95,12 +95,11 @@ void ScenePostEffect::Paint()
 	//unbind vao
 	shaderProgram->release();
 }
-
 void ScenePostEffect::Init()
 {
 	initializeOpenGLFunctions();
 	preShader = Tp->posteffect;
-	InitShader(vs_fs[preShader][0].c_str(), vs_fs[preShader][1].c_str());
+	InitShader(vs_fs[preShader - 1][0].c_str(), vs_fs[preShader - 1][1].c_str());
 	//InitShader("./Shader/pix.vs", "./Shader/frost.fs");
 	
 	InitVAO();
@@ -177,7 +176,6 @@ void ScenePostEffect::InitShader(QString vertexShaderPath, QString fragmentShade
 void ScenePostEffect::InitFramBuffer() {
 	glGenFramebuffers(1, &FramBufferName);
 	glBindFramebuffer(GL_FRAMEBUFFER, FramBufferName);
-
 	glGenTextures(1, &renderedTexture);
 	// "Bind" the newly created texture : all future texture functions will modify this texture 
 	glBindTexture(GL_TEXTURE_2D, renderedTexture);
@@ -193,11 +191,11 @@ void ScenePostEffect::InitFramBuffer() {
 	DrawBuffers << GL_COLOR_ATTACHMENT0;
 	glDrawBuffers(1, &DrawBuffers[0]); // "1" is the size of DrawBuffers
 	
-
 	GLuint depthrenderbuffer;
 	glGenRenderbuffers(1, &depthrenderbuffer);
 	glBindRenderbuffer(GL_RENDERBUFFER, depthrenderbuffer);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, Tp->width(), Tp->height());
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthrenderbuffer);
+
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
