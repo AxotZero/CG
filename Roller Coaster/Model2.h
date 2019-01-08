@@ -1,10 +1,6 @@
 #pragma once
 
 //#include "Include/TinyOBJ/tiny_obj_loader.h"
-
-#include "Include/Assimp/Importer.hpp"
-#include "Include/Assimp/scene.h"
-#include "Include/Assimp/postprocess.h"
 #include<iostream>
 #include "Utilities/ArcBallCam.H"
 #include <QtGui/QOpenGLFunctions_4_3_Core>
@@ -13,9 +9,6 @@
 #include <QtGui/QOpenGLShader>
 #include <QtGui/QOpenGLShaderProgram>
 #include <QtOpenGL/QtOpenGL> 
-#include <QVector>
-#include <QVector3D>
-#include <QVector2D>
 #include <QFileInfo>
 #include <QOpenGLTexture>
 #include <QImage>
@@ -23,6 +16,9 @@
 #include <QString>
 #include <vector>
 #include "mesh.h"
+#include "Include/Assimp/Importer.hpp"
+#include "Include/Assimp/scene.h"
+#include "Include/Assimp/postprocess.h"
 using namespace std;
 class Model2 : protected QOpenGLFunctions_4_3_Core
 {

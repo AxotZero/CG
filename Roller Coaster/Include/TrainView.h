@@ -77,7 +77,10 @@ public:
 	int				selectedCube;  // simple - just remember which cube is selected
 
 	CTrack*			m_pTrack;		// The track of the entire scene
-	unsigned int DIVIDE_LINE = 1000;
+	unsigned int DIVIDE_LINE = 100;
+	unsigned int trainNum = 4;
+	float trainDistance = 20.0;
+	float speed = 6.0;
 	int camera;
 	int posteffect=0;
 	int curve;
@@ -94,9 +97,13 @@ public:
 	GLfloat ModelViewMatrex[16];
 	ScenePostEffect * SPE;
 	QVector<QOpenGLTexture*> Textures;
-	Model * model;
+
+	bool physical = true;
+	Model * train;
+	Model * building;
 	Model2 tower;
 	Model2 house;
+	Model2 car;
 	C3DSLoader statue;
 };  
 #endif // TRAINVIEW_H 
