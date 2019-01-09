@@ -44,8 +44,10 @@ void TrainView::initializeGL()
 	train = new Model("./Model/Lamborghini_Aventador.obj", 15, Point3d(0,5,0), 0);
 	tower.Init("./Model/wooden watch tower2.obj", "./Model/Wood_Tower_Col.jpg", "./Model/Wood_Tower_Nor.jpg", glm::vec3(0, 0, 80), 3);
 	house.Init("./Model/Medieval_House.obj", "./Model/Medieval_House_Diff.png", "./Model/Medieval_House_Nor.png", glm::vec3(80, 0, 0), 0.1);
-	car.Init("./Model/Lamborghini_Aventador.obj", "./Model/Lamborginhi Aventador_diffuse.jpeg","./Model/Lamborginhi Aventador_gloss.jpeg", "./Model/Lamborginhi Aventador_spec.jpeg", glm::vec3(0, 0, 0), 0.07);
+	//car.Init("./Model/Lamborghini_Aventador.obj", "./Model/Lamborginhi Aventador_diffuse.jpeg","./Model/Lamborginhi Aventador_gloss.jpeg", "./Model/Lamborginhi Aventador_spec.jpeg", glm::vec3(0, 0, 0), 0.07);
 	building = new Model("./Model/Mushroom.obj", 10, Point3d(-40, 0, 0), 0);
+	wheel = new Model("./Model/Wheel.obj", 2, Point3d(0, 0, 0), 1);
+	city.Init("./Model/Lowpoly_City_Free_Pack.obj", "./Model/Palette.jpg", glm::vec3(19, 15, -19), 0.0415);
 	//statue = new C3DSLoader(QString("./statue.3ds"));
 	//statue.Init("./Hogwarts.3DS");
 	Skybox = new skybox();
@@ -207,6 +209,7 @@ void TrainView::paintBeforeEffect() {
 	house.Paint(ProjectionMatrex, ModelViewMatrex);
 	car.Paint(ProjectionMatrex, ModelViewMatrex);
 	glColor3ub(255, 255, 255);
+	city.Paint(ProjectionMatrex, ModelViewMatrex);
 	building->render(0, 0);
 	//statue.Draw();
 	drawStuff();
@@ -373,6 +376,7 @@ void TrainView::drawStuff(bool doingShadows)
 
 			if (j != 0 || type_spline == 0)
 			{
+				
 				glVertex3f(qt0.x + cross_t.x, qt0.y + cross_t.y, qt0.z + cross_t.z);
 				glVertex3f(qt1.x + cross_t.x, qt1.y + cross_t.y, qt1.z + cross_t.z);
 
@@ -384,7 +388,6 @@ void TrainView::drawStuff(bool doingShadows)
 			if (j > 1) {
 				boardLength += sqrt(pow(qt1.x - qt0.x, 2) + pow(qt1.y - qt0.y, 2) + pow(qt1.z - qt0.z, 2));
 				if (boardLength > 7.0) {
-					if (!doingShadows) { glColor3ub(255, 255, 255); }
 					Pnt3f boardCross = cross_t * 1.4f;
 					boardLength = 0;
 					Pnt3f next = qt1 - qt0;
@@ -392,6 +395,8 @@ void TrainView::drawStuff(bool doingShadows)
 					next = next * 0.7;
 
 					glBegin(GL_QUADS);
+					if(!doingShadows) glColor3ub(132, 62, 0);
+
 					glVertex3f(qt0.x + boardCross.x, qt0.y + boardCross.y, qt0.z + boardCross.z);
 					glVertex3f(qt0.x + next.x + boardCross.x, qt1.y + boardCross.y, qt1.z + boardCross.z);
 					glVertex3f(qt0.x + next.x - boardCross.x, qt1.y - boardCross.y, qt1.z - boardCross.z);
@@ -511,6 +516,19 @@ drawTrain(bool doingShadow) {
 	trainI[0] = i;
 	_t[0] = t;
 	Pnt3f qt, orient_t, qt0;
+	const auto &pointer = m_pTrack;
+	auto foo = [pointer, &trainCpPos1, &trainCpPos2, &trainCpPos3, &trainCpPos0,
+		&trainCpOrient1, &trainCpOrient2, &trainCpOrient3, &trainCpOrient0](int j, int i) {
+		trainCpPos1[j] = pointer->points[i].pos;
+		trainCpPos2[j] = pointer->points[(i + 1) % pointer->points.size()].pos;
+		trainCpPos3[j] = pointer->points[(i + 2) % pointer->points.size()].pos;
+		trainCpPos0[j] = (i == 0) ? pointer->points[pointer->points.size() - 1].pos : pointer->points[i - 1].pos;
+
+		trainCpOrient1[j] = pointer->points[i].orient;
+		trainCpOrient2[j] = pointer->points[(i + 1) % pointer->points.size()].orient;
+		trainCpOrient3[j] = pointer->points[(i + 2) % pointer->points.size()].orient;
+		trainCpOrient0[j] = (i == 0) ? pointer->points[pointer->points.size() - 1].orient : pointer->points[i - 1].orient;
+	};
 
 	switch (type_spline) {
 	case spline_Linear:
@@ -534,21 +552,9 @@ drawTrain(bool doingShadow) {
 				_t[j] -= 0.01;
 				if (_t[j] < 0) {
 					_t[j] += 1.0;
-
 					i -= 1;
 					if (i < 0) i = m_pTrack->points.size() - 1;
-
-					trainCpPos1[j] = m_pTrack->points[i].pos;
-					trainCpPos2[j] = m_pTrack->points[(i + 1) % m_pTrack->points.size()].pos;
-					trainCpPos3[j] = m_pTrack->points[(i + 2) % m_pTrack->points.size()].pos;
-					trainCpPos0[j] = (i == 0) ? m_pTrack->points[m_pTrack->points.size() - 1].pos : m_pTrack->points[i - 1].pos;
-
-					trainCpOrient1[j] = m_pTrack->points[i].orient;
-					trainCpOrient2[j] = m_pTrack->points[(i + 1) % m_pTrack->points.size()].orient;
-					trainCpOrient3[j] = m_pTrack->points[(i + 2) % m_pTrack->points.size()].orient;
-					trainCpOrient0[j] = (i == 0) ? m_pTrack->points[m_pTrack->points.size() - 1].orient : m_pTrack->points[i - 1].orient;
-					
-					
+					foo(j, i);
 				}
 				trainqt[j] = (1 - _t[j]) * trainCpPos1[j] + _t[j] * trainCpPos2[j];
 				trainqt0[j] = (1 - _t[j] + 0.01) * trainCpPos1[j] + (_t[j] - 0.01) *trainCpPos2[j];
@@ -579,21 +585,9 @@ drawTrain(bool doingShadow) {
 				_t[j] -= 0.01;
 				if (_t[j] < 0) {
 					_t[j] += 1.0;
-
 					i -= 1;
 					if (i < 0) i = m_pTrack->points.size() - 1;
-
-					trainCpPos1[j] = m_pTrack->points[i].pos;
-					trainCpPos2[j] = m_pTrack->points[(i + 1) % m_pTrack->points.size()].pos;
-					trainCpPos3[j] = m_pTrack->points[(i + 2) % m_pTrack->points.size()].pos;
-					trainCpPos0[j] = (i == 0) ? m_pTrack->points[m_pTrack->points.size() - 1].pos : m_pTrack->points[i - 1].pos;
-
-					trainCpOrient1[j] = m_pTrack->points[i].orient;
-					trainCpOrient2[j] = m_pTrack->points[(i + 1) % m_pTrack->points.size()].orient;
-					trainCpOrient3[j] = m_pTrack->points[(i + 2) % m_pTrack->points.size()].orient;
-					trainCpOrient0[j] = (i == 0) ? m_pTrack->points[m_pTrack->points.size() - 1].orient : m_pTrack->points[i - 1].orient;
-
-
+					foo(j, i);
 				}
 				trainqt[j] = Cubic(trainCpPos0[j], trainCpPos1[j], trainCpPos2[j], trainCpPos3[j], MA, _t[j]);
 				trainqt0[j] = Cubic(trainCpPos0[j], trainCpPos1[j], trainCpPos2[j], trainCpPos3[j], MA, _t[j] - 0.01);
@@ -622,20 +616,9 @@ drawTrain(bool doingShadow) {
 				_t[j] -= 0.01;
 				if (_t[j] < 0) {
 					_t[j] += 1.0;
-
 					i -= 1;
 					if (i < 0) i = m_pTrack->points.size() - 1;
-
-					trainCpPos1[j] = m_pTrack->points[i].pos;
-					trainCpPos2[j] = m_pTrack->points[(i + 1) % m_pTrack->points.size()].pos;
-					trainCpPos3[j] = m_pTrack->points[(i + 2) % m_pTrack->points.size()].pos;
-					trainCpPos0[j] = (i == 0) ? m_pTrack->points[m_pTrack->points.size() - 1].pos : m_pTrack->points[i - 1].pos;
-
-					trainCpOrient1[j] = m_pTrack->points[i].orient;
-					trainCpOrient2[j] = m_pTrack->points[(i + 1) % m_pTrack->points.size()].orient;
-					trainCpOrient3[j] = m_pTrack->points[(i + 2) % m_pTrack->points.size()].orient;
-					trainCpOrient0[j] = (i == 0) ? m_pTrack->points[m_pTrack->points.size() - 1].orient : m_pTrack->points[i - 1].orient;
-
+					foo(j, i);
 				}
 				trainqt[j] = Cubic(trainCpPos0[j], trainCpPos1[j], trainCpPos2[j], trainCpPos3[j], MB, _t[j]);
 				trainqt0[j] = Cubic(trainCpPos0[j], trainCpPos1[j], trainCpPos2[j], trainCpPos3[j], MB, _t[j] - 0.01);
@@ -646,9 +629,7 @@ drawTrain(bool doingShadow) {
 		break;
 	}
 
-
 	if (!doingShadow) { glColor3ub(255, 255, 255); }	
-	
 	Pnt3f direct;
 	if (this->isrun) {
 		float Length = sqrt(pow(trainqt[0].x - trainqt0[0].x, 2) + pow(trainqt[0].y - trainqt0[0].y, 2) + pow(trainqt[0].z - trainqt0[0].z, 2));
@@ -657,37 +638,70 @@ drawTrain(bool doingShadow) {
 			float dy = trainqt[0].y - trainqt0[0].y;
 				speed -= dy / Length * 0.01;
 			if (speed < 1.0) speed = 1.0;
+		}
+		else
+			speed = 10.0;
 
-			this->t_time += (speed / m_pTrack->points.size() / (10714.0 * Length));
-		}
-		else {
-			this->t_time += (6.0 / m_pTrack->points.size() / (10714.0 * Length));
-			speed = 6.0;
-		}
-			
-		
+		wheelAngle += speed / 8.0;
+		if (wheelAngle >= 360) wheelAngle = 0.0;
+		this->t_time += (speed / m_pTrack->points.size() / (10714.0 * Length));
 		if (this->t_time > 1.0f)
 			this->t_time -= 1.0f;
 	}
 
 	for (int j = 0; j < trainNum; j++) {
 		direct.y = atan2(trainqt[j].x - trainqt0[j].x, trainqt[j].z - trainqt0[j].z);
-		direct.x = atan2(trainqt[j].y - trainqt0[j].y, trainqt[j].z - trainqt0[j].z);
+		float tmp = trainqt[j].y - trainqt0[j].y;
+		if (abs(tmp) < 0.000001) tmp = 0;
+		direct.x = atan2( tmp, trainqt[j].z - trainqt0[j].z);
 		direct.z = atan2(trainOrient_t[j].z, trainOrient_t[j].y);
 
 		direct = direct * (180.0 / 3.14);
-		if (direct.x >= 90.0) direct.x = 180.0 - direct.x;
-		else if (direct.x <= -90.0) direct.x = -(180 - -direct.x);
+		if (direct.x > 90.0) direct.x = 180.0 - direct.x;
+		else if (direct.x < -90.0) direct.x = -(180 - -direct.x);
+
+		if (direct.z > 90.0) direct.z = 180.0 - direct.z;
+		else if (direct.z < -90.0) direct.z = -(180 - -direct.z);
 
 		glPushMatrix();
 		glTranslated(trainqt[j].x, trainqt[j].y, trainqt[j].z);
 		glRotated(direct.y, 0, 1, 0);
 		glRotated(-direct.x, 1, 0, 0);
 		glRotated(direct.z, 0, 0, 1);
+		if (!doingShadow) { glColor3ub(255, 255, 255); }
 		train->render(false, false);
+		
+		if (!doingShadow) { glColor3ub(0, 0, 0); }
+		glPushMatrix();
+		glTranslated(3.3,1.2,3.95);
+		glRotated(90 , 0, 1, 0);
+		glRotated(wheelAngle, 0, 0, 1);
+		wheel->render(false, false);
+		glPopMatrix();
+
+		glPushMatrix();
+		glTranslated(-3.3, 1.2, 3.95);
+		glRotated(90, 0, 1, 0);
+		glRotated(wheelAngle, 0, 0, 1);
+		wheel->render(false, false);
+		glPopMatrix();
+
+		glPushMatrix();
+		glTranslated(3.3, 1.2, -4.5);
+		glRotated(90, 0, 1, 0);
+		glRotated(wheelAngle, 0, 0, 1);
+		wheel->render(false, false);
+		glPopMatrix();
+
+		glPushMatrix();
+		glTranslated(-3.3, 1.2, -4.5);
+		glRotated(90, 0, 1, 0);
+		glRotated(wheelAngle, 0, 0, 1);
+		wheel->render(false, false);
+		glPopMatrix();
 		glPopMatrix();
 	}
-
+	
 	delete trainqt;
 	delete trainqt0;
 	delete trainOrient_t;
