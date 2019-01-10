@@ -20,6 +20,7 @@
 #include <QtCore/QString>
 #include <string>
 #include "3DSLoader.h"
+#include "Particle.h"
 using namespace std;
 class ScenePostEffect;
 
@@ -103,6 +104,8 @@ public:
 	Model * train;
 	Model * building;
 	Model * wheel;
+	Model * people;
+	Model * hand;
 	Model2 tower;
 	Model2 house;
 	Model2 car;

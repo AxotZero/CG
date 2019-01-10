@@ -337,6 +337,7 @@ void AppMain::SwitchPlayAndPause()
 void AppMain::ChangeSpeedOfTrain( int val )
 {
 	//m_rollerCoaster->trainSpeed = m_rollerCoaster->MAX_TRAIN_SPEED * float(val) / 100.0f;
+	trainview->speed = 50.0f * float(val) / 100.0f;
 }
 
 void AppMain::AddControlPoint()

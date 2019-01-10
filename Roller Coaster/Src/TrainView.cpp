@@ -41,13 +41,16 @@ void TrainView::initializeGL()
 	Water = new water(QVector3D(-50, 2, -50), QVector3D(50,2,50));
 	Water->Init();
 
-	train = new Model("./Model/Lamborghini_Aventador.obj", 15, Point3d(0,5,0), 0);
+	train = new Model("./Model/benz-tropfenwagen-3-litre-1922.obj", 15, Point3d(0,5,0), 0);
 	tower.Init("./Model/wooden watch tower2.obj", "./Model/Wood_Tower_Col.jpg", "./Model/Wood_Tower_Nor.jpg", glm::vec3(0, 0, 80), 3);
 	house.Init("./Model/Medieval_House.obj", "./Model/Medieval_House_Diff.png", "./Model/Medieval_House_Nor.png", glm::vec3(80, 0, 0), 0.1);
 	//car.Init("./Model/Lamborghini_Aventador.obj", "./Model/Lamborginhi Aventador_diffuse.jpeg","./Model/Lamborginhi Aventador_gloss.jpeg", "./Model/Lamborginhi Aventador_spec.jpeg", glm::vec3(0, 0, 0), 0.07);
 	building = new Model("./Model/Mushroom.obj", 10, Point3d(-40, 0, 0), 0);
-	wheel = new Model("./Model/Wheel.obj", 2, Point3d(0, 0, 0), 1);
+	wheel = new Model("./Model/Wheel.obj", 2.5, Point3d(0, 0, 0), 1);
 	city.Init("./Model/Lowpoly_City_Free_Pack.obj", "./Model/Palette.jpg", glm::vec3(19, 15, -19), 0.0415);
+	people = new Model("./Model/lowpoly_max.obj", 3, Point3d(0, 5, 0), 0);
+	hand = new Model("./Model/Hand_rigged.obj", 1, Point3d(0, 5, 0), 0);
+
 	//statue = new C3DSLoader(QString("./statue.3ds"));
 	//statue.Init("./Hogwarts.3DS");
 	Skybox = new skybox();
@@ -212,7 +215,12 @@ void TrainView::paintBeforeEffect() {
 	city.Paint(ProjectionMatrex, ModelViewMatrex);
 	building->render(0, 0);
 	//statue.Draw();
+	ProcessParticles();
+	DrawParticles();
+
 	drawStuff();
+
+
 }
 //************************************************************************
 //
@@ -636,7 +644,7 @@ drawTrain(bool doingShadow) {
 
 		if (physical) {
 			float dy = trainqt[0].y - trainqt0[0].y;
-				speed -= dy / Length * 0.01;
+				speed -= dy / Length * 0.015;
 			if (speed < 1.0) speed = 1.0;
 		}
 		else
@@ -650,51 +658,76 @@ drawTrain(bool doingShadow) {
 	}
 
 	for (int j = 0; j < trainNum; j++) {
-		direct.y = atan2(trainqt[j].x - trainqt0[j].x, trainqt[j].z - trainqt0[j].z);
-		float tmp = trainqt[j].y - trainqt0[j].y;
-		if (abs(tmp) < 0.000001) tmp = 0;
-		direct.x = atan2( tmp, trainqt[j].z - trainqt0[j].z);
-		direct.z = atan2(trainOrient_t[j].z, trainOrient_t[j].y);
+		float dx = trainqt[j].x - trainqt0[j].x,
+			dy = trainqt[j].y - trainqt0[j].y,
+			dz = trainqt[j].z - trainqt0[j].z;
+		
+		if (abs(dy) < 0.000001) dy = 0;
+		if (abs(dx) < 0.000001) dx = 0;
+		if (abs(dz) < 0.000001) dz = 0;
+		Pnt3f d(dx, dy, dz);
+		d.normalize();
+
+		direct.y = atan2(dx, dz);
+		direct.x = atan2(dy, sqrt(dz * dz + dx * dx));
+		direct.z = atan2(d.x * trainOrient_t[j].z + d.z * trainOrient_t[j].x , trainOrient_t[j].y);
 
 		direct = direct * (180.0 / 3.14);
 		if (direct.x > 90.0) direct.x = 180.0 - direct.x;
 		else if (direct.x < -90.0) direct.x = -(180 - -direct.x);
 
-		if (direct.z > 90.0) direct.z = 180.0 - direct.z;
-		else if (direct.z < -90.0) direct.z = -(180 - -direct.z);
-
+		//車
 		glPushMatrix();
-		glTranslated(trainqt[j].x, trainqt[j].y, trainqt[j].z);
+		glTranslated(trainqt[j].x + trainOrient_t[j].x * 2.0, trainqt[j].y + trainOrient_t[j].y * 2.0, trainqt[j].z + trainOrient_t[j].z * 2.0);
 		glRotated(direct.y, 0, 1, 0);
 		glRotated(-direct.x, 1, 0, 0);
 		glRotated(direct.z, 0, 0, 1);
 		if (!doingShadow) { glColor3ub(255, 255, 255); }
 		train->render(false, false);
 		
+		//人
+		glPushMatrix();
+		glTranslated(0, -0.5,1);
+		if (!doingShadow) { glColor3ub(255, 117, 117); }
+		people->render(0, 0);
+		glPopMatrix();
+
+		//手
+		if (dy < 0) {
+			if (!doingShadow) { glColor3ub(255, 217, 157); }
+			glPushMatrix();
+			glTranslated(0.3, 2, 0.5);
+			hand->render(false, false);
+			glTranslated(-0.6, 0, 0);
+			hand->render(false, false);
+			glPopMatrix();
+		}
+
+		//輪子
 		if (!doingShadow) { glColor3ub(0, 0, 0); }
 		glPushMatrix();
-		glTranslated(3.3,1.2,3.95);
+		glTranslated(2.6, -0.5, 4.5);
 		glRotated(90 , 0, 1, 0);
 		glRotated(wheelAngle, 0, 0, 1);
 		wheel->render(false, false);
 		glPopMatrix();
 
 		glPushMatrix();
-		glTranslated(-3.3, 1.2, 3.95);
+		glTranslated(-2.6, -0.5, 4.5);
 		glRotated(90, 0, 1, 0);
 		glRotated(wheelAngle, 0, 0, 1);
 		wheel->render(false, false);
 		glPopMatrix();
 
 		glPushMatrix();
-		glTranslated(3.3, 1.2, -4.5);
+		glTranslated(2.6, -0.5, -3.8);
 		glRotated(90, 0, 1, 0);
 		glRotated(wheelAngle, 0, 0, 1);
 		wheel->render(false, false);
 		glPopMatrix();
 
 		glPushMatrix();
-		glTranslated(-3.3, 1.2, -4.5);
+		glTranslated(-2.6, -0.5, -3.8);
 		glRotated(90, 0, 1, 0);
 		glRotated(wheelAngle, 0, 0, 1);
 		wheel->render(false, false);
