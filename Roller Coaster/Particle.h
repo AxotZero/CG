@@ -79,5 +79,5 @@ void DrawfParticles();
 void ProcessRain();
 void DrawRain();
 //shoot
-void ProcessShooting();
+void ProcessShooting(bool);
 void DrawShooting();

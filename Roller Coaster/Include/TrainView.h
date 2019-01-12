@@ -122,6 +122,7 @@ public:
 	Model2 car;
 	Model2 city;
 	Model2 fountain;
+	Model2 tree1, tree2, tree3, tree4;
 	C3DSLoader statue;
 };  
 #endif // TRAINVIEW_H 

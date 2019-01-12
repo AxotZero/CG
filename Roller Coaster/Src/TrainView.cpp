@@ -2,8 +2,12 @@
 #include "ScenePostEffect.h"
 #include <GLM/glm/glm.hpp>
 #define PI 3.14159
-//#define demo
+#define demo
 static int timer = 0;
+const int Red = 500;
+const int Rotate = 750;
+const int fall = Rotate + 180;
+const int Win = 1200;
 float MA[4][4] =
 {
 	{ -0.5, 1, -0.5, 0 },
@@ -50,7 +54,6 @@ void TrainView::initializeGL()
 	car.Init("./Model/Lamborghini_Aventador.obj", "./Model/Lamborginhi Aventador_diffuse.jpeg","./Model/Lamborginhi Aventador_gloss.jpeg", "./Model/Lamborginhi Aventador_spec.jpeg", glm::vec3(0, 0, 0), 0.07);
 	building = new Model("./Model/Mushroom.obj", 10, Point3d(40, 0, 0), 0);
 	city.Init("./Model/Lowpoly_City_Free_Pack.obj", "./Model/Palette.jpg", glm::vec3(19, 15, -19), 0.0415);
-	
 	//Initialize texture 
 	
 	fountain.Init("./Model/fountain.obj", "./Model/fountainDE.tga", "./Model/fountainN_NRM.tga", "./Model/fountainN_SPEC.tga", glm::vec3(-80, 5, 80), 0.3);
@@ -64,7 +67,7 @@ void TrainView::initializeGL()
 	people = new Model("./Model/lowpoly_max.obj", 3, Point3d(0, 5, 0), 0);
 	hand = new Model("./Model/Hand_rigged.obj", 1, Point3d(0, 5, 0), 0);
 	cloud = new Model("./Model/cloud.obj", 40, Point3d(-1200, 500, -1200), 0);
-	monster = new Model("./Model/MrHumpty.obj", 80, Point3d(0, 0, -200),0);
+	monster = new Model("./Model/MrHumpty.obj", 80, Point3d(0, 0, 0),0);
 	//fort = new Model("./Model/TankCannon.obj", 30, Point3d(0, 0, 0), 0);
 	airplane = new Model("./Model/TankCannon.obj", 30, Point3d(0, 160, -500), 0);
 	//dragon.Init("./Model/dragon.obj", "./Model/dragon.bmp", glm::vec3(-60, 0, 0), 1);
@@ -222,9 +225,8 @@ void TrainView::paintBeforeEffect() {
 	//Particle
 	fountain.Paint(ProjectionMatrex, ModelViewMatrex);
 	
-	
 #endif	
-	
+	glMatrixMode(GL_MODELVIEW);
 	if (Firework) {
 		ProcessParticles();
 		DrawParticles();
@@ -242,21 +244,38 @@ void TrainView::paintBeforeEffect() {
 	
 	if (Fighting) {
 		timer++;
-		
-		ProcessShooting();
-		DrawShooting();
-
-		glColor3ub(255, 255, 255);
 		//cloud->render(0, 0);
 		glEnable(GL_BLEND);
 
-		if (timer > 3600) glColor4ub(204, 0, 0, 255);
-		else glColor4ub(170, 119, 0, timer > 255 ? 255 : timer);
+		if (timer > Red) { 
+			ProcessShooting(0);
+			DrawShooting();
+			glColor4ub(255, 157, 157, 255); 
+		}
+		else { 
+			ProcessShooting(1);
+			DrawShooting();
+			glColor4ub(170, 119, 0, timer > 255 ? 255 : timer);
+		}
+		glPushMatrix();
+		glTranslated(0, 5, -85);
+		if (timer > fall) {
+			glTranslated(0, fall - timer, -22.5);
+			glRotated(180, 1, 0, 0);
+		}
+		else if (timer >= Rotate) {
+			glTranslated(0, 5, (Rotate - timer)/8);
+			glRotated(-(timer - Rotate), 1, 0, 0); 
+		}
+		if (timer > Win) { 
+			Fighting = 0; 
+			timer = 0; }
 		monster->render(0, 0);
+		glPopMatrix();
 		glDisable(GL_BLEND);
 
 	}
-	glMatrixMode(GL_MODELVIEW);
+	
 	//fort->render(0, 0);
 
 	glColor3ub(127, 127, 127);

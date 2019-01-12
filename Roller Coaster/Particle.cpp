@@ -501,7 +501,7 @@ void DrawRain() {
 
 }
 
-void ProcessShooting() {
+void ProcessShooting(bool reset = 1) {
 	Point3d destination(0, 39.5, -63);
 	for (int i = 0; i < MAX_SHOOT; i++) {
 		shoot& r = shooting[i];
@@ -526,7 +526,7 @@ void ProcessShooting() {
 				}
 			}
 			else
-				r = shoot();
+				if(reset) r = shoot();
 		}
 		else break;
 	}
@@ -535,7 +535,7 @@ void ProcessShooting() {
 void DrawShooting() {
 	for (int i = 0; i < MAX_SHOOT; i++) {
 		shoot& p = shooting[i];
-		if (p.shooting) {
+		if (p.shooting && p.life > 0) {
 			glColor3f(255, 255, 0);
 			if(p.reflect) glColor3f(255, 255, 255);
 			glPointSize(5);
