@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1032</width>
-    <height>769</height>
+    <width>1163</width>
+    <height>850</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -77,6 +77,65 @@
       <property name="bottomMargin">
        <number>0</number>
       </property>
+      <item>
+       <widget class="QGroupBox" name="groupBox_3">
+        <property name="title">
+         <string>GroupBox</string>
+        </property>
+        <widget class="QPushButton" name="Firework">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>20</y>
+           <width>93</width>
+           <height>28</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Firework</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="Snow">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>50</y>
+           <width>93</width>
+           <height>28</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Snow</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="Fountain">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>80</y>
+           <width>93</width>
+           <height>28</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Fountain</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="Fighting">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>110</y>
+           <width>93</width>
+           <height>28</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Fighting</string>
+         </property>
+        </widget>
+       </widget>
+      </item>
       <item>
        <spacer name="horizontalSpacer">
         <property name="orientation">
@@ -1138,7 +1197,7 @@ QComboBox QAbstractItemView {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1032</width>
+     <width>1163</width>
      <height>25</height>
     </rect>
    </property>

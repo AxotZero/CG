@@ -89,6 +89,11 @@ private:
 		void RotateControlPointAddZ();
 		void RotateControlPointSubZ();
 
+		void ChangeFountain();
+		void ChangeSnow();
+		void ChangeFighting();
+		void ChangeFirework();
+
 protected:
 	bool eventFilter(QObject *watched, QEvent *e); 
 };

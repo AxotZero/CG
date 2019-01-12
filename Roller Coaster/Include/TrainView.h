@@ -81,13 +81,18 @@ public:
 	unsigned int DIVIDE_LINE = 100;
 	unsigned int trainNum = 4;
 	float trainDistance = 20.0;
-	float speed = 10.0;
+	float speed = 35.0;
 	float wheelAngle = 0.0;
 	int camera;
 	int posteffect=0;
 	int curve;
 	int track;
 	bool isrun;
+	bool Firework = false;
+	bool Snow = false;
+	bool Fountain = false;
+	bool Fighting = false;
+
 	float t_time = 0;
 	Triangle* triangle;
 	Square* square;
@@ -106,10 +111,17 @@ public:
 	Model * wheel;
 	Model * people;
 	Model * hand;
+	Model * cloud;
+	Model * monster;
+	Model * fort;
+	Model * airplane;
+	Model2 UFO;
+	Model2 dragon;
 	Model2 tower;
 	Model2 house;
 	Model2 car;
 	Model2 city;
+	Model2 fountain;
 	C3DSLoader statue;
 };  
 #endif // TRAINVIEW_H 

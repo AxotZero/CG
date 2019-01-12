@@ -82,9 +82,13 @@ struct Point3d
 		Q_ASSERT(index < 3);
 		return (&x)[index];
 	}
-};
 
-inline float dot(const Point3d &a, const Point3d &b)
+	float distance(const Point3d &p) {
+		return sqrt(pow(x - p.x, 2) + pow(y - p.y, 2) + pow(z - p.z, 2));
+	}
+};
+template<class T>
+inline float dot(const T &a, const T &b)
 {
 	return a.x * b.x + a.y * b.y + a.z * b.z;
 }

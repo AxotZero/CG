@@ -1,8 +1,9 @@
 #include "TrainView.h"  
 #include "ScenePostEffect.h"
-
 #include <GLM/glm/glm.hpp>
-
+#define PI 3.14159
+//#define demo
+static int timer = 0;
 float MA[4][4] =
 {
 	{ -0.5, 1, -0.5, 0 },
@@ -29,6 +30,9 @@ void TrainView::initializeGL()
 {
 	initializeOpenGLFunctions();
 	//Create a triangle object
+#ifdef demo
+	Skybox = new skybox();
+	Skybox->Init();
 	triangle = new Triangle();
 	//Initialize the triangle object
 	triangle->Init();
@@ -38,28 +42,34 @@ void TrainView::initializeGL()
 	square->Init();
 	Plane = new plane();
 	Plane->Init();
-	Water = new water(QVector3D(-50, 2, -50), QVector3D(50,2,50));
+	Water = new water(QVector3D(-50, 2, -50), QVector3D(50, 2, 50));
 	Water->Init();
 
-	train = new Model("./Model/benz-tropfenwagen-3-litre-1922.obj", 15, Point3d(0,5,0), 0);
 	tower.Init("./Model/wooden watch tower2.obj", "./Model/Wood_Tower_Col.jpg", "./Model/Wood_Tower_Nor.jpg", glm::vec3(0, 0, 80), 3);
 	house.Init("./Model/Medieval_House.obj", "./Model/Medieval_House_Diff.png", "./Model/Medieval_House_Nor.png", glm::vec3(80, 0, 0), 0.1);
-	//car.Init("./Model/Lamborghini_Aventador.obj", "./Model/Lamborginhi Aventador_diffuse.jpeg","./Model/Lamborginhi Aventador_gloss.jpeg", "./Model/Lamborginhi Aventador_spec.jpeg", glm::vec3(0, 0, 0), 0.07);
-	building = new Model("./Model/Mushroom.obj", 10, Point3d(-40, 0, 0), 0);
-	wheel = new Model("./Model/Wheel.obj", 2.5, Point3d(0, 0, 0), 1);
+	car.Init("./Model/Lamborghini_Aventador.obj", "./Model/Lamborginhi Aventador_diffuse.jpeg","./Model/Lamborginhi Aventador_gloss.jpeg", "./Model/Lamborginhi Aventador_spec.jpeg", glm::vec3(0, 0, 0), 0.07);
+	building = new Model("./Model/Mushroom.obj", 10, Point3d(40, 0, 0), 0);
 	city.Init("./Model/Lowpoly_City_Free_Pack.obj", "./Model/Palette.jpg", glm::vec3(19, 15, -19), 0.0415);
-	people = new Model("./Model/lowpoly_max.obj", 3, Point3d(0, 5, 0), 0);
-	hand = new Model("./Model/Hand_rigged.obj", 1, Point3d(0, 5, 0), 0);
-
-	//statue = new C3DSLoader(QString("./statue.3ds"));
-	//statue.Init("./Hogwarts.3DS");
-	Skybox = new skybox();
-	Skybox->Init();
+	
 	//Initialize texture 
+	
+	fountain.Init("./Model/fountain.obj", "./Model/fountainDE.tga", "./Model/fountainN_NRM.tga", "./Model/fountainN_SPEC.tga", glm::vec3(-80, 5, 80), 0.3);
 	SPE = new ScenePostEffect(this);
 	SPE->Init();
-	initializeTexture();
 	
+#endif
+	UFO.Init("./Model/Ufo.obj", "./Model/Ufo.png", glm::vec3(160, 80, 0), 5);
+	train = new Model("./Model/benz-tropfenwagen-3-litre-1922.obj", 15, Point3d(0, 5, 0), 0);
+	wheel = new Model("./Model/Wheel.obj", 2.5, Point3d(0, 0, 0), 1);
+	people = new Model("./Model/lowpoly_max.obj", 3, Point3d(0, 5, 0), 0);
+	hand = new Model("./Model/Hand_rigged.obj", 1, Point3d(0, 5, 0), 0);
+	cloud = new Model("./Model/cloud.obj", 40, Point3d(-1200, 500, -1200), 0);
+	monster = new Model("./Model/MrHumpty.obj", 80, Point3d(0, 0, -200),0);
+	//fort = new Model("./Model/TankCannon.obj", 30, Point3d(0, 0, 0), 0);
+	airplane = new Model("./Model/TankCannon.obj", 30, Point3d(0, 160, -500), 0);
+	//dragon.Init("./Model/dragon.obj", "./Model/dragon.bmp", glm::vec3(-60, 0, 0), 1);
+	
+	initializeTexture();
 }
 void TrainView::initializeTexture()
 {
@@ -102,15 +112,12 @@ void TrainView::paintBeforeEffect() {
 	glViewport(0, 0, width(), height());
 	// clear the window, be sure to clear the Z-Buffer too
 	glClearColor(0, 0, 0.3f, 0);
-
 	// we need to clear out the stencil buffer since we'll use
 	// it for shadows
 	glClearStencil(0);
 	glEnable(GL_DEPTH);
-
 	// Blayne prefers GL_DIFFUSE
 	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-
 	// prepare for projection
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -126,7 +133,6 @@ void TrainView::paintBeforeEffect() {
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
-
 	// top view only needs one light
 	if (this->camera == 1) {
 		glDisable(GL_LIGHT1);
@@ -136,7 +142,6 @@ void TrainView::paintBeforeEffect() {
 		glEnable(GL_LIGHT1);
 		glEnable(GL_LIGHT2);
 	}
-
 	//*********************************************************************
 	//
 	// * set the light parameters
@@ -168,7 +173,6 @@ void TrainView::paintBeforeEffect() {
 	setupFloor();
 	glDisable(GL_LIGHTING);
 	drawFloor(200, 10);
-
 	//*********************************************************************
 	// now draw the object and we need to do it twice
 	// once for real, and then once for shadows
@@ -176,7 +180,6 @@ void TrainView::paintBeforeEffect() {
 	glEnable(GL_LIGHTING);
 	setupObjects();
 	// this time drawing is for shadows (except for top view)
-	
 	if (this->camera != 1) {
 		setupShadows();
 		drawStuff(true);
@@ -191,36 +194,91 @@ void TrainView::paintBeforeEffect() {
 	//Plane->Paint(ProjectionMatrex, ModelViewMatrex);
 	Quat qAll = arcball.now *arcball.start;
 	qAll = qAll.conjugate();
-
 	//Water->Paint(ProjectionMatrex, ModelViewMatrex, QVector3D(arcball.eyeX+qAll.x, arcball.eyeY + qAll.y, arcball.eyeZ + qAll.z));
-	
 	//we manage textures by Trainview class, so we modify square's render function
+	
+
+#ifdef demo
 	Skybox->Paint(ProjectionMatrex, ModelViewMatrex);
 
-	//square->Begin();
-	////Active Texture
-	//glActiveTexture(GL_TEXTURE0);
-	////Bind square's texture
-	//Textures[0]->bind();
-	////pass texture to shader
-	//square->shaderProgram->setUniformValue("Texture", 0);
-	////Call square's render function, pass ModelViewMatrex and ProjectionMatrex
-	//square->Paint(ProjectionMatrex, ModelViewMatrex);
-	//square->End();
+	/*square->Begin();
+	//Active Texture
+	glActiveTexture(GL_TEXTURE0);
+	//Bind square's texture
+	Textures[0]->bind();
+	//pass texture to shader
+	square->shaderProgram->setUniformValue("Texture", 0);
+	//Call square's render function, pass ModelViewMatrex and ProjectionMatrex
+	square->Paint(ProjectionMatrex, ModelViewMatrex);
+	square->End();*/
 
 	tower.Paint(ProjectionMatrex, ModelViewMatrex);
 	house.Paint(ProjectionMatrex, ModelViewMatrex);
 	car.Paint(ProjectionMatrex, ModelViewMatrex);
 	glColor3ub(255, 255, 255);
 	city.Paint(ProjectionMatrex, ModelViewMatrex);
-	building->render(0, 0);
+	//building->render(0, 0);
 	//statue.Draw();
-	ProcessParticles();
-	DrawParticles();
+	//Particle
+	fountain.Paint(ProjectionMatrex, ModelViewMatrex);
+	
+	
+#endif	
+	
+	if (Firework) {
+		ProcessParticles();
+		DrawParticles();
+	}
+	
+	if (Fountain) {
+		ProcessfParticles();
+		DrawfParticles();
+	}
+
+	if (Snow) {
+		ProcessRain();
+		DrawRain();
+	}
+	
+	if (Fighting) {
+		timer++;
+		
+		ProcessShooting();
+		DrawShooting();
+
+		glColor3ub(255, 255, 255);
+		//cloud->render(0, 0);
+		glEnable(GL_BLEND);
+
+		if (timer > 3600) glColor4ub(204, 0, 0, 255);
+		else glColor4ub(170, 119, 0, timer > 255 ? 255 : timer);
+		monster->render(0, 0);
+		glDisable(GL_BLEND);
+
+	}
+	glMatrixMode(GL_MODELVIEW);
+	//fort->render(0, 0);
+
+	glColor3ub(127, 127, 127);
+	glPushMatrix();
+	glTranslated(0, 0, 0);
+	glRotated(180, 0, 1, 0);
+	glTranslated(0, 8, 0);
+	airplane->render(0, 0);
+	glRotated(90, 1, 0, 1);
+	glPopMatrix();
+	
+
+	glPushMatrix();
+	glRotated(timer % 360, 0, 1, 0);
+	//Get modelview matrix
+	glGetFloatv(GL_MODELVIEW_MATRIX, ModelViewMatrex);
+	//Get projection matrix
+	glGetFloatv(GL_PROJECTION_MATRIX, ProjectionMatrex);
+	UFO.Paint(ProjectionMatrex, ModelViewMatrex);
+	glPopMatrix();
 
 	drawStuff();
-
-
 }
 //************************************************************************
 //
@@ -394,7 +452,8 @@ void TrainView::drawStuff(bool doingShadows)
 			glEnd();
 			
 			if (j > 1) {
-				boardLength += sqrt(pow(qt1.x - qt0.x, 2) + pow(qt1.y - qt0.y, 2) + pow(qt1.z - qt0.z, 2));
+				float d = sqrt(pow(qt1.x - qt0.x, 2) + pow(qt1.y - qt0.y, 2) + pow(qt1.z - qt0.z, 2));
+				boardLength += d;
 				if (boardLength > 7.0) {
 					Pnt3f boardCross = cross_t * 1.4f;
 					boardLength = 0;
@@ -437,51 +496,16 @@ void TrainView::drawStuff(bool doingShadows)
 #endif
 }
 
-void TrainView::
-	doPick(int mx, int my)
-	//========================================================================
-{
-	// since we'll need to do some GL stuff so we make this window as 
-	// active window
-	makeCurrent();
-
-	// get the viewport - most reliable way to turn mouse coords into GL coords
-	int viewport[4];
-	glGetIntegerv(GL_VIEWPORT, viewport);
-
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity ();
-
-	gluPickMatrix((double)mx, (double)(viewport[3]-my), 
-		5, 5, viewport);
-
-	// now set up the projection
-	setProjection();
-
-	// now draw the objects - but really only see what we hit
-	GLuint buf[100];
-	glSelectBuffer(100,buf);
-	glRenderMode(GL_SELECT);
-	glInitNames();
-	glPushName(0);
+inline float vectorLength(Pnt3f vec) {
+	return sqrt(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z);
+}
 
 
-	// draw the cubes, loading the names as we go
-	for(size_t i=0; i<m_pTrack->points.size(); ++i) {
-		glLoadName((GLuint) (i+1));
-		m_pTrack->points[i].draw();
-	}
-
-	// go back to drawing mode, and see how picking did
-	int hits = glRenderMode(GL_RENDER);
-	if (hits) {
-		// warning; this just grabs the first object hit - if there
-		// are multiple objects, you really want to pick the closest
-		// one - see the OpenGL manual 
-		// remember: we load names that are one more than the index
-		selectedCube = buf[3]-1;
-	} else // nothing hit, nothing selected
-		selectedCube = -1;
+float vectorAngle(Pnt3f base, Pnt3f vec2) {
+	float angle;
+	float cosAngle = dot(base, vec2) / (vectorLength(base) * vectorLength(vec2));
+	angle = acos(cosAngle) * 180 / PI;
+	return angle;
 }
 
 void TrainView::
@@ -644,7 +668,7 @@ drawTrain(bool doingShadow) {
 
 		if (physical) {
 			float dy = trainqt[0].y - trainqt0[0].y;
-				speed -= dy / Length * 0.015;
+				speed -= dy / Length * 0.05;
 			if (speed < 1.0) speed = 1.0;
 		}
 		else
@@ -668,11 +692,42 @@ drawTrain(bool doingShadow) {
 		Pnt3f d(dx, dy, dz);
 		d.normalize();
 
+		float L;
+		Pnt3f Zv;
+		if (d.y == 0) Zv = Pnt3f(0, 1, 0);
+		else {
+			L = tan((90 - vectorAngle(d, Pnt3f(0, 1, 0))) / 180.0 * PI) * d.y;
+			Zv = (Pnt3f(0, d.y, 0) - Pnt3f(d.x, 0, d.z) * L);
+			Zv.normalize();
+			if (d.y < 0)
+				Zv = Zv * -1;
+		}
+		trainOrient_t[j].normalize();
+		Pnt3f Up = (trainOrient_t[j] + sin((vectorAngle(d, trainOrient_t[j]) - 90.0)/180.0 * PI) * d);
+		Up.normalize();
+		float Angle = vectorAngle(Zv, Up);
+		Pnt3f cross = d * Zv;
+		if (vectorAngle(cross, Up) > 90.0) Angle *= -1;
+		
+		if (j == 0) {
+			glBegin(GL_LINES);
+			if(!doingShadow) glColor3ub(255,255,255);
+			glVertex3f(0, 0, 0);
+			glVertex3f(30 * Up.x, 30 * Up.y, 30 * Up.z);
+			if(!doingShadow)glColor3ub(255, 255, 0);
+			glVertex3f(0, 0, 0);
+			glVertex3f(30 * Zv.x, 30 * Zv.y, 30 * Zv.z);
+			glEnd();
+		}
+
+
+
 		direct.y = atan2(dx, dz);
 		direct.x = atan2(dy, sqrt(dz * dz + dx * dx));
-		direct.z = atan2(d.x * trainOrient_t[j].z + d.z * trainOrient_t[j].x , trainOrient_t[j].y);
+		//direct.z = atan2(d.x * trainOrient_t[j].z + d.z * trainOrient_t[j].x , d.y * trainOrient_t[j].y);
 
-		direct = direct * (180.0 / 3.14);
+
+		direct = direct * (180.0 / PI);
 		if (direct.x > 90.0) direct.x = 180.0 - direct.x;
 		else if (direct.x < -90.0) direct.x = -(180 - -direct.x);
 
@@ -681,7 +736,7 @@ drawTrain(bool doingShadow) {
 		glTranslated(trainqt[j].x + trainOrient_t[j].x * 2.0, trainqt[j].y + trainOrient_t[j].y * 2.0, trainqt[j].z + trainOrient_t[j].z * 2.0);
 		glRotated(direct.y, 0, 1, 0);
 		glRotated(-direct.x, 1, 0, 0);
-		glRotated(direct.z, 0, 0, 1);
+		glRotated(Angle, 0, 0, 1);
 		if (!doingShadow) { glColor3ub(255, 255, 255); }
 		train->render(false, false);
 		
@@ -698,7 +753,10 @@ drawTrain(bool doingShadow) {
 			glPushMatrix();
 			glTranslated(0.3, 2, 0.5);
 			hand->render(false, false);
-			glTranslated(-0.6, 0, 0);
+			glPopMatrix();
+
+			glPushMatrix();
+			glTranslated(-0.3, 2, 0.5);
 			hand->render(false, false);
 			glPopMatrix();
 		}
@@ -750,4 +808,52 @@ drawTrain(bool doingShadow) {
 	delete trainCpOrient1;
 	delete trainCpOrient2;
 	delete trainCpOrient3;
+}
+
+void TrainView::
+doPick(int mx, int my)
+//========================================================================
+{
+	// since we'll need to do some GL stuff so we make this window as 
+	// active window
+	makeCurrent();
+
+	// get the viewport - most reliable way to turn mouse coords into GL coords
+	int viewport[4];
+	glGetIntegerv(GL_VIEWPORT, viewport);
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+
+	gluPickMatrix((double)mx, (double)(viewport[3] - my),
+		5, 5, viewport);
+
+	// now set up the projection
+	setProjection();
+
+	// now draw the objects - but really only see what we hit
+	GLuint buf[100];
+	glSelectBuffer(100, buf);
+	glRenderMode(GL_SELECT);
+	glInitNames();
+	glPushName(0);
+
+
+	// draw the cubes, loading the names as we go
+	for (size_t i = 0; i<m_pTrack->points.size(); ++i) {
+		glLoadName((GLuint)(i + 1));
+		m_pTrack->points[i].draw();
+	}
+
+	// go back to drawing mode, and see how picking did
+	int hits = glRenderMode(GL_RENDER);
+	if (hits) {
+		// warning; this just grabs the first object hit - if there
+		// are multiple objects, you really want to pick the closest
+		// one - see the OpenGL manual 
+		// remember: we load names that are one more than the index
+		selectedCube = buf[3] - 1;
+	}
+	else // nothing hit, nothing selected
+		selectedCube = -1;
 }

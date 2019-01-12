@@ -57,6 +57,10 @@ AppMain::AppMain(QWidget *parent)
 	connect( ui.rcpzsub		,SIGNAL(clicked()),this,SLOT(RotateControlPointSubZ())				);
 
 	connect(ui.postShader, SIGNAL(currentIndexChanged(QString)), this, SLOT(ChangePostEffect(QString)));
+	connect(ui.Fountain, SIGNAL(clicked()), this, SLOT(ChangeFountain()));
+	connect(ui.Firework, SIGNAL(clicked()), this, SLOT(ChangeFirework()));
+	connect(ui.Snow, SIGNAL(clicked()), this, SLOT(ChangeSnow()));
+	connect(ui.Fighting, SIGNAL(clicked()), this, SLOT(ChangeFighting()));
 	QMediaPlayer* player;
 
 	//player = new QMediaPlayer;
@@ -70,6 +74,19 @@ AppMain::AppMain(QWidget *parent)
 AppMain::~AppMain()
 {
 
+}
+
+void AppMain::ChangeFountain() {
+	trainview->Fountain = !trainview->Fountain;
+}
+void AppMain::ChangeFirework() {
+	trainview->Firework = !trainview->Firework;
+}
+void AppMain::ChangeSnow() {
+	trainview->Snow = !trainview->Snow;
+}
+void AppMain::ChangeFighting() {
+	if (!trainview->Fighting) trainview->Fighting = 1;
 }
 
 bool AppMain::eventFilter(QObject *watched, QEvent *e) {
@@ -337,7 +354,7 @@ void AppMain::SwitchPlayAndPause()
 void AppMain::ChangeSpeedOfTrain( int val )
 {
 	//m_rollerCoaster->trainSpeed = m_rollerCoaster->MAX_TRAIN_SPEED * float(val) / 100.0f;
-	trainview->speed = 50.0f * float(val) / 100.0f;
+	trainview->speed = 70.0f * float(val) / 100.0f;
 }
 
 void AppMain::AddControlPoint()

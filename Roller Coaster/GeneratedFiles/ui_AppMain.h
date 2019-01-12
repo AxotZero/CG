@@ -48,6 +48,11 @@ public:
     QVBoxLayout *verticalLayout;
     QVBoxLayout *mainLayout;
     QHBoxLayout *horizontalLayout;
+    QGroupBox *groupBox_3;
+    QPushButton *Firework;
+    QPushButton *Snow;
+    QPushButton *Fountain;
+    QPushButton *Fighting;
     QSpacerItem *horizontalSpacer;
     QGroupBox *groupCamera;
     QComboBox *comboCamera;
@@ -85,7 +90,7 @@ public:
     {
         if (AppMainClass->objectName().isEmpty())
             AppMainClass->setObjectName(QStringLiteral("AppMainClass"));
-        AppMainClass->resize(1032, 769);
+        AppMainClass->resize(1163, 850);
         QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
         sizePolicy.setHorizontalStretch(0);
         sizePolicy.setVerticalStretch(0);
@@ -165,6 +170,23 @@ public:
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
         horizontalLayout->setSizeConstraint(QLayout::SetDefaultConstraint);
         horizontalLayout->setContentsMargins(0, 0, 0, 0);
+        groupBox_3 = new QGroupBox(centralWidget);
+        groupBox_3->setObjectName(QStringLiteral("groupBox_3"));
+        Firework = new QPushButton(groupBox_3);
+        Firework->setObjectName(QStringLiteral("Firework"));
+        Firework->setGeometry(QRect(0, 20, 93, 28));
+        Snow = new QPushButton(groupBox_3);
+        Snow->setObjectName(QStringLiteral("Snow"));
+        Snow->setGeometry(QRect(0, 50, 93, 28));
+        Fountain = new QPushButton(groupBox_3);
+        Fountain->setObjectName(QStringLiteral("Fountain"));
+        Fountain->setGeometry(QRect(0, 80, 93, 28));
+        Fighting = new QPushButton(groupBox_3);
+        Fighting->setObjectName(QStringLiteral("Fighting"));
+        Fighting->setGeometry(QRect(0, 110, 93, 28));
+
+        horizontalLayout->addWidget(groupBox_3);
+
         horizontalSpacer = new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
         horizontalLayout->addItem(horizontalSpacer);
@@ -599,7 +621,7 @@ public:
         AppMainClass->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(AppMainClass);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 1032, 25));
+        menuBar->setGeometry(QRect(0, 0, 1163, 25));
         menuFile = new QMenu(menuBar);
         menuFile->setObjectName(QStringLiteral("menuFile"));
         menuCamera = new QMenu(menuBar);
@@ -659,6 +681,11 @@ public:
         aLine->setText(QApplication::translate("AppMainClass", "Line", nullptr));
         aTrack->setText(QApplication::translate("AppMainClass", "Track", nullptr));
         aRoad->setText(QApplication::translate("AppMainClass", "Road", nullptr));
+        groupBox_3->setTitle(QApplication::translate("AppMainClass", "GroupBox", nullptr));
+        Firework->setText(QApplication::translate("AppMainClass", "Firework", nullptr));
+        Snow->setText(QApplication::translate("AppMainClass", "Snow", nullptr));
+        Fountain->setText(QApplication::translate("AppMainClass", "Fountain", nullptr));
+        Fighting->setText(QApplication::translate("AppMainClass", "Fighting", nullptr));
         groupCamera->setTitle(QApplication::translate("AppMainClass", "Camera", nullptr));
         comboCamera->setItemText(0, QApplication::translate("AppMainClass", "World", nullptr));
         comboCamera->setItemText(1, QApplication::translate("AppMainClass", "Top", nullptr));

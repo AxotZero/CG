@@ -31,29 +31,53 @@ typedef struct tag_PARTICLE
 	tag_PARTICLE* pPrev;//上一particle   
 } Particle, *pParticle;
 
+typedef struct fountainParticle {
+	Point3d pos;
+	Point3d speed;
+	Point3d color;
+	Point3d normal;
+	float life, size, fade;
+
+	fountainParticle();
+
+}fParticle;
+
+typedef struct rainParticle {
+	Point3d pos1;
+	float speed;
+	int size;
+	rainParticle();
+}rain;
+
+typedef struct shootParticle {
+	Point3d pos, pos2;
+	Point3d speed;
+	Point3d color;
+	float life, fade;
+	bool reflect , shooting;
+	shootParticle();
+}shoot;
+
+//Particle
 void AddParticle(Particle ex);
-
 void DeleteParticle(pParticle* p);
-
 void DeleteAll(pParticle* Part);
-
 void InitParticle(Particle& ep);
-
 void Explosion1(Particle* par);
-
 void Explosion2(Particle* par);
-
 void Explosion3(Particle* par);
-
 void Explosion4(Particle* par);
-
 void Explosion5(Particle* par);
-
 void Explosion6(Particle* par);
-
 void Explosion7(Particle* par);
-
 void ProcessParticles();
-
 void DrawParticles();
-
+//fParticle
+void ProcessfParticles();
+void DrawfParticles();
+//rain
+void ProcessRain();
+void DrawRain();
+//shoot
+void ProcessShooting();
+void DrawShooting();
