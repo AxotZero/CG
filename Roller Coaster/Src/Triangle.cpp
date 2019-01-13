@@ -30,22 +30,21 @@ void Triangle::Paint(GLfloat* ProjectionMatrix, GLfloat* ModelViewMatrix)
 	shaderProgram->setUniformValue("ProjectionMatrix",P);
 	//pass modelview matrix to shader
 	shaderProgram->setUniformValue("ModelViewMatrix",MV);
-	shaderProgram->setUniformValue("waterHeight", 0.0f);
 	static float T = 0;
 	T++;
 	//std::cout << T << "\n";
 	shaderProgram->setUniformValue("time", T);
 	shaderProgram->setUniformValue("numWaves", 1);
-	GLfloat a[8] = { 3.0f,0,0,0,0,0,0,0 },
-		a2[8] = { 3.0f,0,0,0,0,0,0,0 },
-		a3[8] = { 0.005f,0,0,0,0,0,0,0 }
+	GLfloat a[8] = { 5.0f,0,0,0,0,0,0,0 },
+		a2[8] = { 10.0f,0,0,0,0,0,0,0 },
+		a3[8] = { 0.2f,0,0,0,0,0,0,0 }
 	, a4[8] = { 1,0,0,0,0,0,0,0 };
 	QVector2D dir[8] = { QVector2D(1,0) };
 	shaderProgram->setUniformValueArray("amplitude", a , 8, 1);
 	shaderProgram->setUniformValueArray("wavelength", a2, 8 , 1);
 	shaderProgram->setUniformValueArray("speed", a3, 8, 1);
 	shaderProgram->setUniformValueArray("direction", dir, 8);
-	shaderProgram->setUniformValue("waterHeight", 4.0f);
+	shaderProgram->setUniformValue("waterHeight", 8.0f);
 	// Bind the buffer so that it is the current active buffer.
 	vvbo.bind();
 	// Enable Attribute 0
@@ -77,7 +76,7 @@ void Triangle::Paint(GLfloat* ProjectionMatrix, GLfloat* ModelViewMatrix)
 }
 void Triangle::Init()
 {
-	InitShader("./Shader/water.vs","./Shader/water.fs");
+	InitShader("./Shader/Triangle.vs","./Shader/Triangle.fs");
 	InitVAO();
 	InitVBO();
 }
@@ -91,9 +90,9 @@ void Triangle::InitVAO()
 void Triangle::InitVBO()
 {
 	//Set each vertex's position
-	vertices<<QVector3D(5.0f, 2.0f, -10.0f)  
-			<<QVector3D(5.0f, 2.0f, 10.0f)  
-			<<QVector3D(15.0f, 2.0f, 0.0f);
+	vertices<<QVector3D(-77.5f, 2.0f, -80.0f)  
+			<<QVector3D(-77.5f, 2.0f, -70.0f)  
+			<<QVector3D(-70.0f, 2.0f, -75.0f);
 	// Create Buffer for position
 	vvbo.create();
 	// Bind the buffer so that it is the current active buffer.

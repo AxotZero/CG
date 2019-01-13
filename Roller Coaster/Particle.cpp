@@ -450,27 +450,23 @@ void ProcessfParticles() {
 }
 
 void DrawfParticles() {
+	glEnable(GL_BLEND);
 	for (int i = 0; i < MAX_PARTICLES; i++) {
 		fParticle& p = Particles2[i];
-		Point3d pos(-80.0, 10.0, 80.0);
+		Point3d pos(-75.0, 10.0, 75.0);
 		if (p.life > 0.0f) {
 			if(p.speed.y < 0)
-				glColor3f(255, 255, 255);
+				glColor4ub(255, 255, 255, 187);
 			else
-				glColor3f(0, 187, 255);
+				glColor4ub(0, 187, 255, 187);
 
-			glPointSize(3);
+			glPointSize(4);
 			glBegin(GL_POINTS);
 			glVertex3f(pos.x + p.pos.x, pos.y + p.pos.y, pos.z + p.pos.z);
 			glEnd();
-			/*glBegin(GL_QUADS);
-			glVertex3f(pos.x + p.pos.x + p.size + p.normal.x, pos.y + p.pos.y + p.size + p.normal.y, pos.z + p.pos.z + p.size + p.normal.z);
-			glVertex3f(pos.x + p.pos.x + p.size + p.normal.x, pos.y + p.pos.y + p.size + p.normal.y, pos.z + p.pos.z - p.size + p.normal.z);
-			glVertex3f(pos.x + p.pos.x - p.size + p.normal.x, pos.y + p.pos.y + p.size + p.normal.y, pos.z + p.pos.z - p.size + p.normal.z);
-			glVertex3f(pos.x + p.pos.x - p.size + p.normal.x, pos.y + p.pos.y - p.size + p.normal.y,  pos.z + p.pos.z + p.size - p.normal.z);
-			glEnd();*/
 		}
 	}
+	glDisable(GL_BLEND);
 }
 
 void ProcessRain() {
@@ -502,7 +498,7 @@ void DrawRain() {
 }
 
 void ProcessShooting(bool reset = 1) {
-	Point3d destination(0, 39.5, -63);
+	Point3d destination(0, 39.5, -65);
 	for (int i = 0; i < MAX_SHOOT; i++) {
 		shoot& r = shooting[i];
 		if (!i || r.shooting || shooting[i].pos.distance(shooting[i - 1].pos) > 2.0f) {

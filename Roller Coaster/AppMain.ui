@@ -153,6 +153,13 @@
        </spacer>
       </item>
       <item>
+       <widget class="QPushButton" name="SP">
+        <property name="text">
+         <string>SP</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QGroupBox" name="groupCamera">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">

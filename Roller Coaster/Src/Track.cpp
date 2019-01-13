@@ -47,15 +47,26 @@ resetPoints()
 {
 
 	points.clear();
-	points.push_back(ControlPoint(Pnt3f(50,5,50)));
-	points.push_back(ControlPoint(Pnt3f(-50,5,50)));
-	points.push_back(ControlPoint(Pnt3f(-50,5,-50)));
-	points.push_back(ControlPoint(Pnt3f(50,5,-50)));
-	points.push_back(ControlPoint(Pnt3f(70, 5, -25)));
-	points.push_back(ControlPoint(Pnt3f(85, 50, 25), Pnt3f(0, 0, -1)));
-	points.push_back(ControlPoint(Pnt3f(80, 75, 0), Pnt3f(0, -1, 0)));
-	points.push_back(ControlPoint(Pnt3f(70, 50, -25), Pnt3f(0, 0, 1)));
-	points.push_back(ControlPoint(Pnt3f(65, 5, 25)));
+	points.push_back(ControlPoint(Pnt3f(60,5,50)));
+
+	points.push_back(ControlPoint(Pnt3f(-95, 5, 50)));
+	points.push_back(ControlPoint(Pnt3f(-95, 10, 95)));
+	points.push_back(ControlPoint(Pnt3f(-50, 15, 95)));
+
+	points.push_back(ControlPoint(Pnt3f(-50, 15, -95)));
+	points.push_back(ControlPoint(Pnt3f(-95, 10, -95)));
+	points.push_back(ControlPoint(Pnt3f(-95, 5, -50)));
+
+	points.push_back(ControlPoint(Pnt3f(95, 5, -50)));
+	points.push_back(ControlPoint(Pnt3f(95, 10, -95)));
+	points.push_back(ControlPoint(Pnt3f(50, 15, -95)));
+
+	points.push_back(ControlPoint(Pnt3f(50, 20, 0)));
+	points.push_back(ControlPoint(Pnt3f(55, 50, 25), Pnt3f(0, 0, -1)));
+	points.push_back(ControlPoint(Pnt3f(60, 80, 0), Pnt3f(0, -1, 0)));
+	points.push_back(ControlPoint(Pnt3f(65, 50, -25), Pnt3f(0, 0, 1)));
+	points.push_back(ControlPoint(Pnt3f(60, 20, 0)));
+	//points.push_back(ControlPoint(Pnt3f(68, 5, 50)));
 	// we had better put the train back at the start of the track...
 	trainU = 0.0;
 }

@@ -4,10 +4,11 @@
 #define PI 3.14159
 #define demo
 static int timer = 0;
-const int Red = 500;
-const int Rotate = 750;
+const int Red = 800;
+const int Rotate = 1100;
 const int fall = Rotate + 180;
-const int Win = 1200;
+const int Win = 1500;
+static int tempo = 0;
 float MA[4][4] =
 {
 	{ -0.5, 1, -0.5, 0 },
@@ -23,6 +24,21 @@ float MB[4][4] =
 	{ 1.0 / 6, 0, 0, 0 }
 };
 
+inline float vectorLength(Pnt3f vec) {
+	return sqrt(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z);
+}
+float vectorAngle(Pnt3f base, Pnt3f vec2) {
+	float angle;
+	float cosAngle = dot(base, vec2) / (vectorLength(base) * vectorLength(vec2));
+	if (cosAngle > 1.0) cosAngle = 1.0;
+	if (cosAngle < -1.0) cosAngle = -1.0;
+	angle = acos(cosAngle) * 180 / PI;
+	return angle;
+}
+
+
+
+
 TrainView::TrainView(QWidget *parent) :  
 QGLWidget(parent)  
 {  
@@ -37,41 +53,53 @@ void TrainView::initializeGL()
 #ifdef demo
 	Skybox = new skybox();
 	Skybox->Init();
-	triangle = new Triangle();
-	//Initialize the triangle object
-	triangle->Init();
+	
 	//Create a square object
 	square = new Square();
 	//Initialize the square object
 	square->Init();
 	Plane = new plane();
 	Plane->Init();
-	Water = new water(QVector3D(-50, 2, -50), QVector3D(50, 2, 50));
+	Water = new water(QVector3D(53, 5, -93), QVector3D(93, 50, -53));
 	Water->Init();
 
-	tower.Init("./Model/wooden watch tower2.obj", "./Model/Wood_Tower_Col.jpg", "./Model/Wood_Tower_Nor.jpg", glm::vec3(0, 0, 80), 3);
-	house.Init("./Model/Medieval_House.obj", "./Model/Medieval_House_Diff.png", "./Model/Medieval_House_Nor.png", glm::vec3(80, 0, 0), 0.1);
-	car.Init("./Model/Lamborghini_Aventador.obj", "./Model/Lamborginhi Aventador_diffuse.jpeg","./Model/Lamborginhi Aventador_gloss.jpeg", "./Model/Lamborginhi Aventador_spec.jpeg", glm::vec3(0, 0, 0), 0.07);
-	building = new Model("./Model/Mushroom.obj", 10, Point3d(40, 0, 0), 0);
+	//tower.Init("./Model/wooden watch tower2.obj", "./Model/Wood_Tower_Col.jpg", "./Model/Wood_Tower_Nor.jpg", glm::vec3(-75, 0, -20), 5);
+	//house.Init("./Model/Medieval_House.obj", "./Model/Medieval_House_Diff.png", "./Model/Medieval_House_Nor.png", glm::vec3(-75, 0, 30), 0.15);
+	//car.Init("./Model/Lamborghini_Aventador.obj", "./Model/Lamborginhi Aventador_diffuse.jpeg","./Model/Lamborginhi Aventador_gloss.jpeg", "./Model/Lamborginhi Aventador_spec.jpeg", glm::vec3(0, 0, 0), 0.07);
+	//building = new Model("./Model/Mushroom.obj", 10, Point3d(40, 0, 0), 0);
 	city.Init("./Model/Lowpoly_City_Free_Pack.obj", "./Model/Palette.jpg", glm::vec3(19, 15, -19), 0.0415);
 	//Initialize texture 
 	
-	fountain.Init("./Model/fountain.obj", "./Model/fountainDE.tga", "./Model/fountainN_NRM.tga", "./Model/fountainN_SPEC.tga", glm::vec3(-80, 5, 80), 0.3);
+	fountain.Init("./Model/fountain.obj", "./Model/fountainDE.tga", "./Model/fountainN_NRM.tga", "./Model/fountainN_SPEC.tga", glm::vec3(-75, 5, 75), 0.3);
+	house2.Init("./Model/Alpine_chalet.obj", "./Model/Diffuse_map.png", "./Model/Normal_map.png", glm::vec3(0, 0, 0), 5);
+
+	//场だ
+	Mario.Init("./Model/mario_obj.obj", "./Model/marioD.jpg", glm::vec3(0, 0, 0), 0.3);
+	Luigi.Init("./Model/luigi_obj.obj", "./Model/luigiD.jpg", glm::vec3(0, 0, 0), 0.33);
+	Finn.Init("./Model/Finn.obj", "./Model/Finn.png", glm::vec3(0, 0, 0), 0.6);
+	model1.Init("./Model/Patrick.obj", "./Model/patrik_skin.jpg", glm::vec3(0, 0, 0), 23);
+	model2.Init("./Model/Mii.obj", "./Model/MiiCompleteMap.tga", glm::vec3(0, 0, 0), 0.15);
+	model3.Init("./Model/eva.obj", "./Model/eva_textureUV.png", glm::vec3(0, 0, 0), 0.25);
+	model4.Init("./Model/Patrick2.obj", "./Model/Skin_Patrick.png", glm::vec3(0, 0, 0), 8);
+
 	SPE = new ScenePostEffect(this);
 	SPE->Init();
 	
 #endif
+	triangle = new Triangle();
+	//Initialize the triangle object
+	triangle->Init();
+
 	UFO.Init("./Model/Ufo.obj", "./Model/Ufo.png", glm::vec3(160, 80, 0), 5);
+
 	train = new Model("./Model/benz-tropfenwagen-3-litre-1922.obj", 15, Point3d(0, 5, 0), 0);
 	wheel = new Model("./Model/Wheel.obj", 2.5, Point3d(0, 0, 0), 1);
 	people = new Model("./Model/lowpoly_max.obj", 3, Point3d(0, 5, 0), 0);
 	hand = new Model("./Model/Hand_rigged.obj", 1, Point3d(0, 5, 0), 0);
-	cloud = new Model("./Model/cloud.obj", 40, Point3d(-1200, 500, -1200), 0);
+	//cloud = new Model("./Model/cloud.obj", 40, Point3d(-1200, 500, -1200), 0);
 	monster = new Model("./Model/MrHumpty.obj", 80, Point3d(0, 0, 0),0);
-	//fort = new Model("./Model/TankCannon.obj", 30, Point3d(0, 0, 0), 0);
 	airplane = new Model("./Model/TankCannon.obj", 30, Point3d(0, 160, -500), 0);
-	//dragon.Init("./Model/dragon.obj", "./Model/dragon.bmp", glm::vec3(-60, 0, 0), 1);
-	
+	showStage.Init("./Model/Sci-Fi-Floor-1-OBJ.obj", "./Model/Sci-Fi-Floor-Diffuse.tga", "./Model/Sci-Fi-Floor-Normal.tga", glm::vec3(-75, 0, -75), 23);
 	initializeTexture();
 }
 void TrainView::initializeTexture()
@@ -197,7 +225,7 @@ void TrainView::paintBeforeEffect() {
 	//Plane->Paint(ProjectionMatrex, ModelViewMatrex);
 	Quat qAll = arcball.now *arcball.start;
 	qAll = qAll.conjugate();
-	//Water->Paint(ProjectionMatrex, ModelViewMatrex, QVector3D(arcball.eyeX+qAll.x, arcball.eyeY + qAll.y, arcball.eyeZ + qAll.z));
+	Water->Paint(ProjectionMatrex, ModelViewMatrex, QVector3D(arcball.eyeX+qAll.x, arcball.eyeY + qAll.y, arcball.eyeZ + qAll.z));
 	//we manage textures by Trainview class, so we modify square's render function
 	
 
@@ -215,11 +243,12 @@ void TrainView::paintBeforeEffect() {
 	square->Paint(ProjectionMatrex, ModelViewMatrex);
 	square->End();*/
 
-	tower.Paint(ProjectionMatrex, ModelViewMatrex);
-	house.Paint(ProjectionMatrex, ModelViewMatrex);
+	//tower.Paint(ProjectionMatrex, ModelViewMatrex);
+	//house.Paint(ProjectionMatrex, ModelViewMatrex);
 	car.Paint(ProjectionMatrex, ModelViewMatrex);
 	glColor3ub(255, 255, 255);
 	city.Paint(ProjectionMatrex, ModelViewMatrex);
+
 	//building->render(0, 0);
 	//statue.Draw();
 	//Particle
@@ -264,7 +293,7 @@ void TrainView::paintBeforeEffect() {
 			glRotated(180, 1, 0, 0);
 		}
 		else if (timer >= Rotate) {
-			glTranslated(0, 5, (Rotate - timer)/8);
+			glTranslated(0, 0, (Rotate - timer)/8);
 			glRotated(-(timer - Rotate), 1, 0, 0); 
 		}
 		if (timer > Win) { 
@@ -276,8 +305,99 @@ void TrainView::paintBeforeEffect() {
 
 	}
 	
-	//fort->render(0, 0);
+	triangle->Paint(ProjectionMatrex, ModelViewMatrex);
+	showStage.Paint(ProjectionMatrex, ModelViewMatrex);
+	//场だ // 53, -93,,, 93, -53
+	glBegin(GL_QUADS);
+	glColor3ub(0, 0, 0);
+	glVertex3f(53, 7, -93);
+	glVertex3f(53, 0, -93);
+	glVertex3f(93, 0, -93);
+	glVertex3f(93, 7, -93);
 
+	glVertex3f(93, 7, -93);
+	glVertex3f(93, 0, -93);
+	glVertex3f(93, 0, -53);
+	glVertex3f(93, 7, -53);
+
+	glVertex3f(93, 7, -53);
+	glVertex3f(93, 0, -53);
+	glVertex3f(53, 0, -53);
+	glVertex3f(53, 7, -53);
+
+	glVertex3f(53, 7, -93);
+	glVertex3f(53, 0, -93);
+	glVertex3f(53, 0, -53);
+	glVertex3f(53, 7, -53);
+
+	glEnd();
+
+	//场だ
+	glPushMatrix();
+	glRotated(180, 0, 1, 0);
+	
+		glPushMatrix();
+		glTranslated(85, 5, 35);
+		glRotated(tempo % 200 > 100 ? 15:-15, 0, 0, 1);
+		glGetFloatv(GL_MODELVIEW_MATRIX, ModelViewMatrex);
+		glGetFloatv(GL_PROJECTION_MATRIX, ProjectionMatrex);
+		Mario.Paint(ProjectionMatrex, ModelViewMatrex);
+		Luigi.Paint(ProjectionMatrex, ModelViewMatrex);
+		glPopMatrix();
+
+		glPushMatrix();
+		glTranslated(85, 5, -20);
+		glRotated(tempo % 200 > 100 ? 15 : -15, 0, 0, 1);
+		glGetFloatv(GL_MODELVIEW_MATRIX, ModelViewMatrex);
+		glGetFloatv(GL_PROJECTION_MATRIX, ProjectionMatrex);
+		Finn.Paint(ProjectionMatrex, ModelViewMatrex);
+		glPopMatrix();
+
+		glPushMatrix();
+		glTranslated(65, 5,-20);
+		glRotated(tempo % 200 > 100 ? 15 : -15, 0, 0, 1);
+		glGetFloatv(GL_MODELVIEW_MATRIX, ModelViewMatrex);
+		glGetFloatv(GL_PROJECTION_MATRIX, ProjectionMatrex);
+		model1.Paint(ProjectionMatrex, ModelViewMatrex);
+		glPopMatrix();
+
+
+		glPushMatrix();
+		glTranslated(85, 5, 0);
+		glRotated(tempo % 200 > 100 ? 15 : -15, 0, 0, 1);
+		glGetFloatv(GL_MODELVIEW_MATRIX, ModelViewMatrex);
+		glGetFloatv(GL_PROJECTION_MATRIX, ProjectionMatrex);
+		model2.Paint(ProjectionMatrex, ModelViewMatrex);
+		glPopMatrix();
+
+		glPushMatrix();
+		glTranslated(65, 5, 0);
+		glRotated(tempo % 200 > 100 ? 15 : -15, 0, 0, 1);
+		glGetFloatv(GL_MODELVIEW_MATRIX, ModelViewMatrex);
+		glGetFloatv(GL_PROJECTION_MATRIX, ProjectionMatrex);
+		model2.Paint(ProjectionMatrex, ModelViewMatrex);
+		glPopMatrix();
+
+		glPushMatrix();
+		glTranslated(75, 5, 20);
+		glRotated(tempo % 200 > 100 ? 15 : -15, 0, 0, 1);
+		glGetFloatv(GL_MODELVIEW_MATRIX, ModelViewMatrex);
+		glGetFloatv(GL_PROJECTION_MATRIX, ProjectionMatrex);
+		model3.Paint(ProjectionMatrex, ModelViewMatrex);
+		glPopMatrix();
+
+		glPushMatrix();
+		glTranslated(75, 25, -40);
+		glRotated(tempo % 200 > 100 ? 15 : -15, 0, 0, 1);
+		glGetFloatv(GL_MODELVIEW_MATRIX, ModelViewMatrex);
+		glGetFloatv(GL_PROJECTION_MATRIX, ProjectionMatrex);
+		model4.Paint(ProjectionMatrex, ModelViewMatrex);
+		glPopMatrix();
+
+	glPopMatrix();
+
+
+	//诀场だ
 	glColor3ub(127, 127, 127);
 	glPushMatrix();
 	glTranslated(0, 0, 0);
@@ -287,15 +407,23 @@ void TrainView::paintBeforeEffect() {
 	glRotated(90, 1, 0, 1);
 	glPopMatrix();
 	
-
+	//盒场だ
 	glPushMatrix();
 	glRotated(timer % 360, 0, 1, 0);
-	//Get modelview matrix
 	glGetFloatv(GL_MODELVIEW_MATRIX, ModelViewMatrex);
-	//Get projection matrix
 	glGetFloatv(GL_PROJECTION_MATRIX, ProjectionMatrex);
 	UFO.Paint(ProjectionMatrex, ModelViewMatrex);
 	glPopMatrix();
+
+	//┬场だ
+	glPushMatrix();
+	glTranslated(0, 11, 73);
+	glRotated(-10, 0, 1, 0);
+	glGetFloatv(GL_MODELVIEW_MATRIX, ModelViewMatrex);
+	glGetFloatv(GL_PROJECTION_MATRIX, ProjectionMatrex);
+	house2.Paint(ProjectionMatrex, ModelViewMatrex);
+	glPopMatrix();
+
 
 	drawStuff();
 }
@@ -393,6 +521,13 @@ void TrainView::drawStuff(bool doingShadows)
 	// Draw the control points
 	// don't draw the control points if you're driving 
 	// (otherwise you get sea-sick as you drive through them)
+	struct supportStructure {
+		Pnt3f pos1, pos2;
+		bool draw;
+		supportStructure(Pnt3f a, Pnt3f b) : pos1(a), pos2(b), draw(1) {}
+	};
+	vector<supportStructure> SP;
+
 	if (this->camera != 2) {
 		for (size_t i = 0; i < this->m_pTrack->points.size(); ++i) {
 			if (!doingShadows) {
@@ -407,6 +542,74 @@ void TrainView::drawStuff(bool doingShadows)
 	}
 	spline_t type_spline = (spline_t)curve;
 	float boardLength = 0;
+	float SPLength = 0;
+	//徊や琜场だ
+	if (SupportStructure) {
+		for (size_t i = 0; i < this->m_pTrack->points.size(); ++i) {
+			// pos
+			Pnt3f cp_pos_p1 = m_pTrack->points[i].pos;
+			Pnt3f cp_pos_p2 = m_pTrack->points[(i + 1) % m_pTrack->points.size()].pos;
+			Pnt3f cp_pos_p3 = m_pTrack->points[(i + 2) % m_pTrack->points.size()].pos;
+			Pnt3f cp_pos_p0 = (i == 0) ? m_pTrack->points[m_pTrack->points.size() - 1].pos : m_pTrack->points[i - 1].pos;
+			// orient
+			Pnt3f cp_orient_p1 = m_pTrack->points[i].orient;
+			Pnt3f cp_orient_p2 = m_pTrack->points[(i + 1) % m_pTrack->points.size()].orient;
+			Pnt3f cp_orient_p3 = m_pTrack->points[(i + 2) % m_pTrack->points.size()].orient;
+			Pnt3f cp_orient_p0 = (i == 0) ? m_pTrack->points[m_pTrack->points.size() - 1].orient : m_pTrack->points[i - 1].orient;
+			vector<Pnt3f> board;
+			//Pnt3f cross_t;
+			float percent = 1.0f / DIVIDE_LINE;
+			float t = 0;
+			Pnt3f qt = cp_pos_p1, orient_t, qt0, qt1, cross_t;
+
+			for (size_t j = 0; j < DIVIDE_LINE; j++) {
+				qt0 = qt;
+				switch (type_spline) {
+				case spline_Linear:
+					orient_t = (1 - t) * cp_orient_p1 + t * cp_orient_p2;
+					break;
+				case spline_CardinalCubic:
+					orient_t = Cubic(cp_orient_p0, cp_orient_p1, cp_orient_p2, cp_orient_p3, MA, t);
+					break;
+				case spline_CubicB_Spline:
+					orient_t = Cubic(cp_orient_p0, cp_orient_p1, cp_orient_p2, cp_orient_p3, MB, t);
+					break;
+				}
+				t += percent;
+				switch (type_spline) {
+				case spline_Linear:
+					qt = (1 - t) * cp_pos_p1 + t * cp_pos_p2;
+					break;
+				case spline_CardinalCubic:
+					qt = Cubic(cp_pos_p0, cp_pos_p1, cp_pos_p2, cp_pos_p3, MA, t);
+					break;
+				case spline_CubicB_Spline:
+					qt = Cubic(cp_pos_p0, cp_pos_p1, cp_pos_p2, cp_pos_p3, MB, t);
+					break;
+				}
+				qt1 = qt;
+				orient_t.normalize();
+				cross_t = (qt1 - qt0) * orient_t;
+				cross_t.normalize();
+				cross_t = cross_t * 2.5f;
+
+				
+				
+				if (j > 1) {
+					float d = sqrt(pow(qt1.x - qt0.x, 2) + pow(qt1.y - qt0.y, 2) + pow(qt1.z - qt0.z, 2));
+					SPLength += d;
+					if (SPLength > 14.0) {
+						SPLength = 0;
+						SP.push_back(supportStructure(qt0 + cross_t, qt0 - cross_t));
+					}
+				}
+			}
+		}
+
+		sort(SP.begin(), SP.end(), [](supportStructure a, supportStructure b) { return a.pos1.y > b.pos1.y; });
+	}
+	
+
 	for (size_t i = 0; i < this->m_pTrack->points.size(); ++i) {
 		// pos
 		Pnt3f cp_pos_p1 = m_pTrack->points[i].pos;
@@ -453,15 +656,40 @@ void TrainView::drawStuff(bool doingShadows)
 			orient_t.normalize();
 			cross_t = (qt1 - qt0) * orient_t;
 			cross_t.normalize();
-			cross_t = cross_t * 2.5f;
+			cross_t = cross_t * 2.4f;
 
+			//耞や琜
+			if(SupportStructure)
+			for (int k = 0;  k < SP.size(); k++) {
+				Pnt3f &s1 = SP[k].pos1, &s2 = SP[k].pos2;
+				if (s1.y > qt.y || s2.y > qt.y) {
+					float L = vectorLength(Pnt3f(cross_t.x, 0, cross_t.z));
+					if (s1.y > qt.y) {
+						float L1 = vectorLength(Pnt3f(s1.x, 0, s1.z) - Pnt3f(qt.x, 0, qt.z));
+						float L2 = vectorLength(Pnt3f(s2.x, 0, s2.z) - Pnt3f(qt.x, 0, qt.z));
+						if (vectorLength(Pnt3f(s1.x, 0, s1.z) - Pnt3f(qt.x, 0, qt.z)) < L) {
+							SP.erase(SP.begin() + k);
+							k--;
+							continue;
+						}
+					}
+					if (s2.y > qt.y) {
+						if (vectorLength(Pnt3f(s2.x, 0, s2.z) - Pnt3f(qt.x, 0, qt.z)) < L) {
+							SP.erase(SP.begin() + k);
+							k--;
+							continue;
+						}
+					}
+				}
+				else break;
+			}
+
+			if (!doingShadows) { glColor3ub(32, 32, 64); }
 			glLineWidth(4);
 			glBegin(GL_LINES);
-			if (!doingShadows) { glColor3ub(32, 32, 64); }
-
 			if (j != 0 || type_spline == 0)
 			{
-				
+
 				glVertex3f(qt0.x + cross_t.x, qt0.y + cross_t.y, qt0.z + cross_t.z);
 				glVertex3f(qt1.x + cross_t.x, qt1.y + cross_t.y, qt1.z + cross_t.z);
 
@@ -469,7 +697,6 @@ void TrainView::drawStuff(bool doingShadows)
 				glVertex3f(qt1.x - cross_t.x, qt1.y - cross_t.y, qt1.z - cross_t.z);
 			}
 			glEnd();
-			
 			if (j > 1) {
 				float d = sqrt(pow(qt1.x - qt0.x, 2) + pow(qt1.y - qt0.y, 2) + pow(qt1.z - qt0.z, 2));
 				boardLength += d;
@@ -492,6 +719,27 @@ void TrainView::drawStuff(bool doingShadows)
 			}
 		}
 	}
+
+	//礶や琜
+	if (SupportStructure) {
+		glLineWidth(4);
+		glBegin(GL_LINES);
+		for (int i = 0; i < SP.size() - 1; i++) {
+
+			if (!doingShadows) glColor3ub(255, 255, 255);
+			if (SP[i].draw && SP[i + 1].draw) {
+				Pnt3f &s1 = SP[i].pos1, &s2 = SP[i].pos2;
+				glVertex3f(s1.x, s1.y, s1.z);
+				glVertex3f(s1.x, 0, s1.z);
+
+				glVertex3f(s2.x, s2.y, s2.z);
+				glVertex3f(s2.x, 0, s2.z);
+			}
+		}
+		glEnd();
+	}
+	
+
 	// draw the track
 	//####################################################################
 	// TODO: 
@@ -515,17 +763,6 @@ void TrainView::drawStuff(bool doingShadows)
 #endif
 }
 
-inline float vectorLength(Pnt3f vec) {
-	return sqrt(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z);
-}
-
-
-float vectorAngle(Pnt3f base, Pnt3f vec2) {
-	float angle;
-	float cosAngle = dot(base, vec2) / (vectorLength(base) * vectorLength(vec2));
-	angle = acos(cosAngle) * 180 / PI;
-	return angle;
-}
 
 void TrainView::
 drawTrain(bool doingShadow) {
@@ -684,18 +921,22 @@ drawTrain(bool doingShadow) {
 	Pnt3f direct;
 	if (this->isrun) {
 		float Length = sqrt(pow(trainqt[0].x - trainqt0[0].x, 2) + pow(trainqt[0].y - trainqt0[0].y, 2) + pow(trainqt[0].z - trainqt0[0].z, 2));
-
+		tempo++;
+		if (tempo > 9000) tempo = 0;
 		if (physical) {
 			float dy = trainqt[0].y - trainqt0[0].y;
-				speed -= dy / Length * 0.05;
-			if (speed < 1.0) speed = 1.0;
+				speed -= dy / Length * 0.1;
+			if (speed < 5.0) speed = 5.0;
 		}
 		else
-			speed = 10.0;
+			speed = 35.0;
 
 		wheelAngle += speed / 8.0;
 		if (wheelAngle >= 360) wheelAngle = 0.0;
-		this->t_time += (speed / m_pTrack->points.size() / (10714.0 * Length));
+		if(SupportStructure)
+			this->t_time += (3 * speed / m_pTrack->points.size() / (10714.0 * Length));
+		else
+			this->t_time += (speed / m_pTrack->points.size() / (10714.0 * Length));
 		if (this->t_time > 1.0f)
 			this->t_time -= 1.0f;
 	}
@@ -727,24 +968,9 @@ drawTrain(bool doingShadow) {
 		float Angle = vectorAngle(Zv, Up);
 		Pnt3f cross = d * Zv;
 		if (vectorAngle(cross, Up) > 90.0) Angle *= -1;
-		
-		if (j == 0) {
-			glBegin(GL_LINES);
-			if(!doingShadow) glColor3ub(255,255,255);
-			glVertex3f(0, 0, 0);
-			glVertex3f(30 * Up.x, 30 * Up.y, 30 * Up.z);
-			if(!doingShadow)glColor3ub(255, 255, 0);
-			glVertex3f(0, 0, 0);
-			glVertex3f(30 * Zv.x, 30 * Zv.y, 30 * Zv.z);
-			glEnd();
-		}
-
-
 
 		direct.y = atan2(dx, dz);
 		direct.x = atan2(dy, sqrt(dz * dz + dx * dx));
-		//direct.z = atan2(d.x * trainOrient_t[j].z + d.z * trainOrient_t[j].x , d.y * trainOrient_t[j].y);
-
 
 		direct = direct * (180.0 / PI);
 		if (direct.x > 90.0) direct.x = 180.0 - direct.x;

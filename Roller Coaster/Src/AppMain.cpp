@@ -61,6 +61,7 @@ AppMain::AppMain(QWidget *parent)
 	connect(ui.Firework, SIGNAL(clicked()), this, SLOT(ChangeFirework()));
 	connect(ui.Snow, SIGNAL(clicked()), this, SLOT(ChangeSnow()));
 	connect(ui.Fighting, SIGNAL(clicked()), this, SLOT(ChangeFighting()));
+	connect(ui.SP, SIGNAL(clicked()), this, SLOT(ChangeSP()));
 	QMediaPlayer* player;
 
 	//player = new QMediaPlayer;
@@ -74,6 +75,10 @@ AppMain::AppMain(QWidget *parent)
 AppMain::~AppMain()
 {
 
+}
+
+void AppMain::ChangeSP() {
+	trainview->SupportStructure = !trainview->SupportStructure;
 }
 
 void AppMain::ChangeFountain() {

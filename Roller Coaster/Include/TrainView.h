@@ -92,6 +92,7 @@ public:
 	bool Snow = false;
 	bool Fountain = false;
 	bool Fighting = false;
+	bool SupportStructure = false;
 
 	float t_time = 0;
 	Triangle* triangle;
@@ -122,7 +123,9 @@ public:
 	Model2 car;
 	Model2 city;
 	Model2 fountain;
-	Model2 tree1, tree2, tree3, tree4;
+	Model2 showStage;
+	Model2 house2;
+	Model2 Mario, Luigi, Finn, model1, model2, model3, model4, model5;
 	C3DSLoader statue;
 };  
 #endif // TRAINVIEW_H 

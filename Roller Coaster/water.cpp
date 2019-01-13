@@ -40,7 +40,7 @@ void water::Paint(GLfloat* ProjectionMatrix, GLfloat* ModelViewMatrix,QVector3D 
 	vao.bind();
 
 	T++;
-	GLfloat  amplitude[8] = { .1f ,0.01f ,0.1f ,0.1f ,0.2f ,0.0f,0.15f,0.3f },
+	GLfloat  amplitude[8] = { .05f ,0.01f ,0.1f ,0.1f ,0.2f ,0.0f,0.15f,0.3f },
 		wavelength[8] = { 1000.0f ,730.0f ,86.0f ,60.0f ,48.0f,90.0f,70.0f ,100.0f },
 		speed[8] = { 1.0f ,0.1f ,0.08f ,0.07f ,0.02f ,0.06f ,0.01f , 0.03f };
 	QVector2D direction[8] = {
@@ -62,7 +62,7 @@ void water::Paint(GLfloat* ProjectionMatrix, GLfloat* ModelViewMatrix,QVector3D 
 	//pass modelview matrix to shader
 	shaderProgram->setUniformValue("time", T);
 	shaderProgram->setUniformValue("ModelViewMatrix", M);
-	shaderProgram->setUniformValue("waterHeight", 10.0f);
+	shaderProgram->setUniformValue("waterHeight", 5.0f);
 	shaderProgram->setUniformValue("numWaves", 8);
 	shaderProgram->setUniformValueArray("amplitude", amplitude, 8, 1);
 	shaderProgram->setUniformValueArray("wavelength", wavelength, 8, 1);

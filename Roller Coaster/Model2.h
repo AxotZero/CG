@@ -51,10 +51,15 @@ public:
 		this->initScale = scale;
 		loadModel(path);
 		myTexture = new QOpenGLTexture(QImage(BaseMap));
-		NTexture = new QOpenGLTexture(QImage(NormalMap));
+		if(NormalMap != NULL){ 
+			NormF = 1; 
+			NTexture = new QOpenGLTexture(QImage(NormalMap));
+		}
+		else NormF = 0;
+
 		SpecTexture = new QOpenGLTexture(QImage(SpecMap));
 		SpecF = 1;
-		NormF = 1;
+		
 	}
 	void Paint(GLfloat* ProjectionMatrix, GLfloat* ModelViewMatrix);
 public:

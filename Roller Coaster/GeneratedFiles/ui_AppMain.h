@@ -54,6 +54,7 @@ public:
     QPushButton *Fountain;
     QPushButton *Fighting;
     QSpacerItem *horizontalSpacer;
+    QPushButton *SP;
     QGroupBox *groupCamera;
     QComboBox *comboCamera;
     QGroupBox *groupCurve;
@@ -190,6 +191,11 @@ public:
         horizontalSpacer = new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
         horizontalLayout->addItem(horizontalSpacer);
+
+        SP = new QPushButton(centralWidget);
+        SP->setObjectName(QStringLiteral("SP"));
+
+        horizontalLayout->addWidget(SP);
 
         groupCamera = new QGroupBox(centralWidget);
         groupCamera->setObjectName(QStringLiteral("groupCamera"));
@@ -686,6 +692,7 @@ public:
         Snow->setText(QApplication::translate("AppMainClass", "Snow", nullptr));
         Fountain->setText(QApplication::translate("AppMainClass", "Fountain", nullptr));
         Fighting->setText(QApplication::translate("AppMainClass", "Fighting", nullptr));
+        SP->setText(QApplication::translate("AppMainClass", "SP", nullptr));
         groupCamera->setTitle(QApplication::translate("AppMainClass", "Camera", nullptr));
         comboCamera->setItemText(0, QApplication::translate("AppMainClass", "World", nullptr));
         comboCamera->setItemText(1, QApplication::translate("AppMainClass", "Top", nullptr));

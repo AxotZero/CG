@@ -93,6 +93,7 @@ private:
 		void ChangeSnow();
 		void ChangeFighting();
 		void ChangeFirework();
+		void ChangeSP();
 
 protected:
 	bool eventFilter(QObject *watched, QEvent *e); 
